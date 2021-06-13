@@ -42,7 +42,7 @@ const HomePage = () => {
           <input type="text" name="username" onChange={handleInputChange} value={searchValue}/>
           <ul>
             {results.map(({id, name}) => (
-              <li><Link to={`/#/user/${id}`}>{name} </Link></li>
+              <li><Link to={`/user/${id}`}>{name} </Link></li>
             ))}
           </ul>
         </form>
