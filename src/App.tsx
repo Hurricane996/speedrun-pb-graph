@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { BrowserRouter as Router, Route, Link, Switch } from "react-router-dom";
+import { HashRouter as Router, Route, Link, Switch } from "react-router-dom";
 
 import HomePage from './HomePage';
 import UserPage from './UserPage'
@@ -10,7 +10,7 @@ import UserPage from './UserPage'
 
 const App = () => {
   return (
-    <Router basename={process.env.PUBLIC_URL}>
+    <Router>
       <h1>
         <Link to="/">Speedrun PB Grapher</Link>
       </h1>
