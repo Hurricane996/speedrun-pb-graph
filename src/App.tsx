@@ -10,7 +10,7 @@ import UserPage from './UserPage'
 
 const App = () => {
   return (
-    <Router>
+    <Router basename={process.env.PUBLIC_URL}>
       <h1>
         <Link to="/">Speedrun PB Grapher</Link>
       </h1>
