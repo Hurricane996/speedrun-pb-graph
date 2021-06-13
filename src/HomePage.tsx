@@ -15,7 +15,7 @@ const HomePage = () => {
   
   
     const getInfo = (query: string) => {
-      axios.get(`http://speedrun.com/api/v1/users?name=${query}`)
+      axios.get(`https://speedrun.com/api/v1/users?name=${query}`)
         .then(({ data }) => {
           setResults(data.data.slice(0,5).map((x: any) => {return {id: x.id, name: x.names.international}}))
           console.log(data)
