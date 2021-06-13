@@ -12,7 +12,7 @@ const App = () => {
   return (
     <Router>
       <h1>
-        <Link to="#/">Speedrun PB Grapher</Link>
+        <Link to="/#/">Speedrun PB Grapher</Link>
       </h1>
       <b>This site is still under construction</b>
 
