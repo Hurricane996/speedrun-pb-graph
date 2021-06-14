@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "axios-jsonp-pro";
 import React, { FC, useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { SPEEDRUN_COM_URL } from "./App";
@@ -77,20 +77,20 @@ const GraphPage: FC = () =>
     const getData = async () => {
         try {
             const [categoryData, userData, runsData] = await Promise.all([
-                axios.get(`${SPEEDRUN_COM_URL}/categories/${categoryId}?embed=game`),
-                axios.get(`${SPEEDRUN_COM_URL}/users/${userId}`),
-                axios.get(`${SPEEDRUN_COM_URL}/runs?user=${userId}&category=${categoryId}`)
+                axios.jsonp(`${SPEEDRUN_COM_URL}/categories/${categoryId}?embed=game&callback=callback`),
+                axios.jsonp(`${SPEEDRUN_COM_URL}/users/${userId}?callback=callback`),
+                axios.jsonp(`${SPEEDRUN_COM_URL}/runs?user=${userId}&category=${categoryId}&callback=callback`)
             ]);
 
             console.log(runsData);
-            setGameName(categoryData.data.data.game.data.names.international);
-            setCategoryName(categoryData.data.data.name);
+            setGameName(categoryData.data.game.data.names.international);
+            setCategoryName(categoryData.data.name);
 
-            setUsername(userData.data.data.names.international);
+            setUsername(userData.data.names.international);
 
             setIsLoading(false);
 
-            setRuns(runsData.data.data
+            setRuns(runsData.data
                 .filter((run: any) => run.status.status !== "rejected")
                 .map((run: any) => ({date: DateTime.fromFormat(run.date, "yyyy-MM-dd"), time: run.times.primary_t}))
                 .sort((first: Run, second: Run) => first.date < second.date ? -1 : 1)

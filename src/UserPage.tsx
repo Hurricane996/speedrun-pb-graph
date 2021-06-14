@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "axios-jsonp-pro";
 import React, { FC, useEffect, useState } from "react";
 import {Link, useParams} from "react-router-dom";
 import { SPEEDRUN_COM_URL } from "./App";
@@ -33,18 +33,18 @@ const UserPage: FC =  () => {
  
 
             const [userApiData, pbData] = await Promise.all([
-                axios.get(`${SPEEDRUN_COM_URL}/users/${id}`),
-                axios.get(`${SPEEDRUN_COM_URL}/users/${id}/personal-bests?embed=game,category`)
+                axios.jsonp(`${SPEEDRUN_COM_URL}/users/${id}?callback=callback`),
+                axios.jsonp(`${SPEEDRUN_COM_URL}/users/${id}/personal-bests?embed=game,category&callback=callback`)
             ]);
 
             setIsLoading(false);
 
-            console.log(pbData.data.data);
+            console.log(pbData.data);
 
             setUserData({
-                id: userApiData.data.data.id,
-                name: userApiData.data.data.names.international,
-                categories: pbData.data.data
+                id: userApiData.data.id,
+                name: userApiData.data.names.international,
+                categories: pbData.data
                     .filter(({category} : any) => category.data.type === "per-game")
                     .map(({game, category}: any) => ({
                         gameName: game.data.names.international,

@@ -1,4 +1,4 @@
-import axios, { CancelTokenSource } from "axios";
+import axios, { CancelTokenSource } from "axios-jsonp-pro";
 import React, { ChangeEvent, useState } from "react";
 import { FC } from "react";
 import { Form } from "react-bootstrap";
@@ -27,11 +27,11 @@ const HomePage: FC = () => {
         try {
             cancelToken = axios.CancelToken.source();
 
-            const {data} = await axios.get(`${SPEEDRUN_COM_URL}/users?name=${query}`,{cancelToken: cancelToken.token});
+            const {data} = await axios.jsonp(`${SPEEDRUN_COM_URL}/users?name=${query}&callback=callback`,{cancelToken: cancelToken.token});
 
-            console.log(data.data);
+            console.log(data);
 
-            setResults(data.data.slice(0,5).map(
+            setResults(data.slice(0,5).map(
                 ({id, names}: any) => ({
                     id, 
                     name: names.international
