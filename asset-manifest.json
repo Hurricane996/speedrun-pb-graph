@@ -1,22 +1,22 @@
 {
   "files": {
-    "main.js": "/speedrun-pb-graph/static/js/main.e4b2e90a.chunk.js",
-    "main.js.map": "/speedrun-pb-graph/static/js/main.e4b2e90a.chunk.js.map",
+    "main.js": "/speedrun-pb-graph/static/js/main.926c7487.chunk.js",
+    "main.js.map": "/speedrun-pb-graph/static/js/main.926c7487.chunk.js.map",
     "runtime-main.js": "/speedrun-pb-graph/static/js/runtime-main.3e4e6256.js",
     "runtime-main.js.map": "/speedrun-pb-graph/static/js/runtime-main.3e4e6256.js.map",
     "static/css/2.15a7a700.chunk.css": "/speedrun-pb-graph/static/css/2.15a7a700.chunk.css",
-    "static/js/2.4a8e3b6c.chunk.js": "/speedrun-pb-graph/static/js/2.4a8e3b6c.chunk.js",
-    "static/js/2.4a8e3b6c.chunk.js.map": "/speedrun-pb-graph/static/js/2.4a8e3b6c.chunk.js.map",
+    "static/js/2.fbe8449c.chunk.js": "/speedrun-pb-graph/static/js/2.fbe8449c.chunk.js",
+    "static/js/2.fbe8449c.chunk.js.map": "/speedrun-pb-graph/static/js/2.fbe8449c.chunk.js.map",
     "static/js/3.5cf4fcc7.chunk.js": "/speedrun-pb-graph/static/js/3.5cf4fcc7.chunk.js",
     "static/js/3.5cf4fcc7.chunk.js.map": "/speedrun-pb-graph/static/js/3.5cf4fcc7.chunk.js.map",
     "index.html": "/speedrun-pb-graph/index.html",
     "static/css/2.15a7a700.chunk.css.map": "/speedrun-pb-graph/static/css/2.15a7a700.chunk.css.map",
-    "static/js/2.4a8e3b6c.chunk.js.LICENSE.txt": "/speedrun-pb-graph/static/js/2.4a8e3b6c.chunk.js.LICENSE.txt"
+    "static/js/2.fbe8449c.chunk.js.LICENSE.txt": "/speedrun-pb-graph/static/js/2.fbe8449c.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.3e4e6256.js",
     "static/css/2.15a7a700.chunk.css",
-    "static/js/2.4a8e3b6c.chunk.js",
-    "static/js/main.e4b2e90a.chunk.js"
+    "static/js/2.fbe8449c.chunk.js",
+    "static/js/main.926c7487.chunk.js"
   ]
 }
