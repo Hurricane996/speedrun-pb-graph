@@ -79,7 +79,7 @@ const GraphPage: FC = () =>
             const [categoryData, userData, runsData] = await Promise.all([
                 axios.jsonp(`${SPEEDRUN_COM_URL}/categories/${categoryId}?embed=game&callback=callback`),
                 axios.jsonp(`${SPEEDRUN_COM_URL}/users/${userId}?callback=callback`),
-                axios.jsonp(`${SPEEDRUN_COM_URL}/runs?user=${userId}&category=${categoryId}&callback=callback`)
+                axios.jsonp(`${SPEEDRUN_COM_URL}/runs?user=${userId}&category=${categoryId}&max=200&callback=callback`)
             ]);
 
             console.log(runsData);
