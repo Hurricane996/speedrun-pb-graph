@@ -44,15 +44,15 @@ const UserPage: FC =  () => {
             setUserData({
                 id: userApiData.data.data.id,
                 name: userApiData.data.data.names.international,
-                categories: pbData.data.data.map(({game, category}: any) => ({
-                    gameName: game.data.names.international,
-                    gameId: game.data.id,
-                    categoryName: category.data.name,
-                    categoryId: category.data.id
-                }))
+                categories: pbData.data.data
+                    .filter(({category} : any) => category.data.type === "per-game")
+                    .map(({game, category}: any) => ({
+                        gameName: game.data.names.international,
+                        gameId: game.data.id,
+                        categoryName: category.data.name,
+                        categoryId: category.data.id
+                    }))
             });
-
-
         } catch (error) {
             setIsError(true);
             setErrorMessage(error.message);
