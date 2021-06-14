@@ -19,7 +19,8 @@ const App = () => {
   return (
     <Router>
       <Navbar bg="dark">
-          <Navbar.Brand><Link to="/"><h6 style={{color: 'white'}}>Speedrun PB Grapher</h6></Link></Navbar.Brand>
+          <Navbar.Brand><Link to="/" style={{textDecoration: 'none'}}><h4 style={{color: 'white'}}>Speedrun PB Grapher</h4></Link></Navbar.Brand>
+          <Nav.Item><Link to="/" style={{color:'white', textDecoration:'none'}}>Home</Link></Nav.Item>
       </Navbar>
       <Container>
         <Switch>
