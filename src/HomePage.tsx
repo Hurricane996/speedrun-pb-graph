@@ -1,5 +1,6 @@
 import axios, { CancelTokenSource } from "axios";
 import React, { ChangeEvent, useState } from "react";
+import { FC } from "react";
 import { Form } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { SPEEDRUN_COM_URL } from "./App";
@@ -14,35 +15,35 @@ interface User {
 
 
 
-const HomePage = () => {
-    let [searchValue, setSearchValue] = useState<string>('');
-    let [searchValueIsLoading, setSearchValueIsLoading] = useState<boolean>(false);
-    let [results, setResults] = useState<User[]>([]);
+const HomePage: FC = () => {
+    const [searchValue, setSearchValue] = useState<string>("");
+    const [searchValueIsLoading, setSearchValueIsLoading] = useState<boolean>(false);
+    const [results, setResults] = useState<User[]>([]);
   
     const getInfo = async (query: string) => {
-      if(cancelToken) {
-        cancelToken.cancel();
-      }
-      try {
-          cancelToken = axios.CancelToken.source();
+        if(cancelToken) {
+            cancelToken.cancel();
+        }
+        try {
+            cancelToken = axios.CancelToken.source();
 
-          let {data} = await axios.get(`${SPEEDRUN_COM_URL}/users?name=${query}`,{cancelToken: cancelToken.token})
+            const {data} = await axios.get(`${SPEEDRUN_COM_URL}/users?name=${query}`,{cancelToken: cancelToken.token});
 
-          console.log(data.data)
+            console.log(data.data);
 
-          setResults(data.data.slice(0,5).map(
-              ({id, names}: any) => ({
-                  id, 
-                  name: names.international
-              })
-          ))
+            setResults(data.data.slice(0,5).map(
+                ({id, names}: any) => ({
+                    id, 
+                    name: names.international
+                })
+            ));
 
-          setSearchValueIsLoading(false);
+            setSearchValueIsLoading(false);
 
-      } catch(error)  {
-          console.log(error);
-      };
-  }
+        } catch(error)  {
+            console.log(error);
+        }
+    };
 
   
     const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -52,31 +53,31 @@ const HomePage = () => {
             getInfo(event.target.value);
         }
         else {
-            setResults([])
+            setResults([]);
         }
-    }
+    };
     return (
-      <>
-        <Form>
-          <Form.Group>
-            <Form.Label>
+        <>
+            <Form>
+                <Form.Group>
+                    <Form.Label>
               Enter your speedrun.com username
-            </Form.Label>
-            <Form.Control type="search" name="username" onChange={handleInputChange} value={searchValue}/>
-          </Form.Group>
-          { !searchValueIsLoading && searchValue.length != 0 ? (
-            <>
-            <h3>Users:</h3>
-            <ul>
-              {results.length > 0 ? results.map(({id, name}) => (
-                <li><Link to={`/user/${id}`}>{name} </Link></li>
-              )) : (<p>No users found</p>)}
-            </ul>
-            </>
-            ) : searchValue.length != 0 ? (<p>Loading...</p>) : <></> }
-        </Form>
-      </>
-    )
-  }
+                    </Form.Label>
+                    <Form.Control type="search" name="username" onChange={handleInputChange} value={searchValue}/>
+                </Form.Group>
+                { !searchValueIsLoading && searchValue.length != 0 ? (
+                    <>
+                        <h3>Users:</h3>
+                        <ul>
+                            {results.length > 0 ? results.map(({id, name}) => (
+                                <li key={id}><Link to={`/user/${id}`}>{name} </Link></li>
+                            )) : (<p>No users found</p>)}
+                        </ul>
+                    </>
+                ) : searchValue.length != 0 ? (<p>Loading...</p>) : <></> }
+            </Form>
+        </>
+    );
+};
 
-  export default HomePage;
+export default HomePage;

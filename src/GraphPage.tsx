@@ -1,21 +1,22 @@
-import axios from 'axios';
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router';
-import { SPEEDRUN_COM_URL } from './App';
+import axios from "axios";
+import React, { FC, useEffect, useState } from "react";
+import { useParams } from "react-router";
+import { SPEEDRUN_COM_URL } from "./App";
 
-import {Chart, Line} from 'react-chartjs-2'
+import { Line} from "react-chartjs-2";
 
-import 'chartjs-adapter-luxon';
-import { DateTime } from 'luxon';
-import { Link } from 'react-router-dom';
-import { Jumbotron } from 'react-bootstrap';
+import "chartjs-adapter-luxon";
+import { DateTime } from "luxon";
+import { Link } from "react-router-dom";
+import { Jumbotron } from "react-bootstrap";
+
 
 
 
 interface Run {
     date: Date;
     time: number;
-};
+}
 
 const makeHumanReadable = (input: number): string => {
     const ms = input % 1;
@@ -28,24 +29,24 @@ const makeHumanReadable = (input: number): string => {
     const sString = s < 10 ? `0${s}` : `${s}`;
 
     const mString = m < 10 ? `0${m}` : `${m}`;
-    const hString = h === 0 ? "" : `${h}:`
+    const hString = h === 0 ? "" : `${h}:`;
 
-    const ret = `${hString}${mString}:${sString}${msString}`
+    const ret = `${hString}${mString}:${sString}${msString}`;
     console.log(ret);
     return ret;
-}
+};
 
 const chartOptions = {
     scales: {
         x: {
-            type: 'time',
+            type: "time",
             time: {
-                tooltipFormat: 'DD'
+                tooltipFormat: "DD"
             }
         },
         y: {
             ticks: {
-                callback: (value: number, index: number, values: number[]) => makeHumanReadable(value)
+                callback: (value: number) => makeHumanReadable(value)
             }
         }
     },
@@ -56,16 +57,16 @@ const chartOptions = {
             }
         }
     }
-}
+};
 
-const GraphPage = () => 
+const GraphPage: FC = () => 
 {
-    const {userId, categoryId} = useParams<{userId?: string, categoryId?: string}>()
+    const {userId, categoryId} = useParams<{userId?: string, categoryId?: string}>();
 
 
-    let [isLoading, setIsLoading] = useState<boolean>(true);
-    let [isError, setIsError] = useState<boolean>(false);
-    let [errorMessage, setErrorMessage] = useState<string>("");
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [isError, setIsError] = useState<boolean>(false);
+    const [errorMessage, setErrorMessage] = useState<string>("");
 
     const [gameName, setGameName] = useState<string>("");
     const [categoryName, setCategoryName] = useState<string>("");
@@ -75,24 +76,24 @@ const GraphPage = () =>
 
     const getData = async () => {
         try {
-            let [categoryData, userData, runsData] = await Promise.all([
+            const [categoryData, userData, runsData] = await Promise.all([
                 axios.get(`${SPEEDRUN_COM_URL}/categories/${categoryId}?embed=game`),
                 axios.get(`${SPEEDRUN_COM_URL}/users/${userId}`),
                 axios.get(`${SPEEDRUN_COM_URL}/runs?user=${userId}&category=${categoryId}`)
-            ])
+            ]);
 
-            console.log(runsData)
+            console.log(runsData);
             setGameName(categoryData.data.data.game.data.names.international);
             setCategoryName(categoryData.data.data.name);
 
-            setUsername(userData.data.data.names.international)
+            setUsername(userData.data.data.names.international);
 
             setIsLoading(false);
 
             setRuns(runsData.data.data
                 .filter((run: any) => run.status.status !== "rejected")
                 .map((run: any) => ({date: DateTime.fromFormat(run.date, "yyyy-MM-dd"), time: run.times.primary_t}))
-            )
+            );
 
 
         } catch (e) {
@@ -100,31 +101,31 @@ const GraphPage = () =>
             setErrorMessage(e.message);
             console.log(e);
         }
-    }
+    };
 
-    useEffect(() => {getData()}, [])
+    useEffect(() => {getData();}, []);
     
-    if(isError) return(<p>Encountered error '{errorMessage}'</p>)
-    if(isLoading) return (<p>Loading...</p>)
+    if(isError) return(<p>Encountered error &quot;{errorMessage}&quot;</p>);
+    if(isLoading) return (<p>Loading...</p>);
 
     const chartData = {
         labels: runs.map(run=>run.date),
         datasets: [{
             label: "Time",
             data: runs.map(run=>run.time),
-            borderColor: 'rgb(255,0,0)',
+            borderColor: "rgb(255,0,0)",
         }]
-    }
+    };
 
 
     return (
         <>
-        <h1>{gameName} : {categoryName} - {username}</h1>
-        <Link to={`/user/${userId}`} >Back to user</Link>
-        <Jumbotron>
-            <Line type='line' data={chartData} options={chartOptions} width={600} height={250} />
-        </Jumbotron>
+            <h1>{gameName} : {categoryName} - {username}</h1>
+            <Link to={`/user/${userId}`} >Back to user</Link>
+            <Jumbotron>
+                <Line type='line' data={chartData} options={chartOptions} width={600} height={250} />
+            </Jumbotron>
         </>
-    )
-}
+    );
+};
 export default GraphPage;
