@@ -132,8 +132,7 @@ const GraphPage: FC = () =>
         plugins: {
             tooltip: {
                 callbacks: {
-                    label: (context: any) => makeHumanReadable(context.parsed.y),
-                    footer: () => "Click the data-point to see the run's speedrun.com page!"
+                    label: (context: any) => makeHumanReadable(context.parsed.y)
                 }
             }
         }
@@ -143,6 +142,7 @@ const GraphPage: FC = () =>
         <>
             <h1>{gameName} : {categoryName} - {username}</h1>
             <Link to={`/user/${userId}`} >Back to user</Link>
+            <p><b> Click a data-point to see the associated run&apos;s speedrun.com page!</b></p>
             <Jumbotron>
                 <Line ref={theChart} type='line' data={chartData} options={chartOptions} />
             </Jumbotron>
