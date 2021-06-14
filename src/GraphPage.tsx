@@ -1,5 +1,5 @@
 import axios from "axios-jsonp-pro";
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useEffect, useState, useRef } from "react";
 import { useParams } from "react-router";
 import { SPEEDRUN_COM_URL } from "./App";
 
@@ -16,6 +16,7 @@ import { Jumbotron } from "react-bootstrap";
 interface Run {
     date: Date;
     time: number;
+    id: string;
 }
 
 const makeHumanReadable = (input: number): string => {
@@ -31,37 +32,15 @@ const makeHumanReadable = (input: number): string => {
     const mString = m < 10 ? `0${m}` : `${m}`;
     const hString = h === 0 ? "" : `${h}:`;
 
-    const ret = `${hString}${mString}:${sString}${msString}`;
-    console.log(ret);
-    return ret;
+    return `${hString}${mString}:${sString}${msString}`;
 };
 
-const chartOptions = {
-    scales: {
-        x: {
-            type: "time",
-            time: {
-                tooltipFormat: "DD"
-            }
-        },
-        y: {
-            ticks: {
-                callback: (value: number) => makeHumanReadable(value)
-            }
-        }
-    },
-    plugins: {
-        tooltip: {
-            callbacks: {
-                label: (context: any) => makeHumanReadable(context.parsed.y)
-            }
-        }
-    }
-};
+
 
 const GraphPage: FC = () => 
 {
     const {userId, categoryId} = useParams<{userId?: string, categoryId?: string}>();
+    const theChart = useRef<typeof Line>(null);
 
 
     const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -92,7 +71,11 @@ const GraphPage: FC = () =>
 
             setRuns(runsData.data
                 .filter((run: any) => run.status.status !== "rejected")
-                .map((run: any) => ({date: DateTime.fromFormat(run.date, "yyyy-MM-dd"), time: run.times.primary_t}))
+                .map((run: any) => ({
+                    date: DateTime.fromFormat(run.date, "yyyy-MM-dd", {zone: "UTC"}), 
+                    time: run.times.primary_t,
+                    id: run.id
+                }))
                 .sort((first: Run, second: Run) => (
                     first.date === second.date
                         ? (first.time < second.time ? -1 : 1)
@@ -122,13 +105,46 @@ const GraphPage: FC = () =>
         }]
     };
 
+    const onChartClick = () => {
+        const activeEl = (theChart.current as any).getActiveElements();
+        if(activeEl.length > 0) {
+            const run = runs[activeEl[0].index];
+            window.location.href = `https://speedrun.com/run/${run.id}`;
+        }
+    };
+
+    const chartOptions = {
+        onClick: onChartClick,
+        responsive: true,
+        scales: {
+            x: {
+                type: "time",
+                time: {
+                    tooltipFormat: "MMM d, yyyy"
+                }
+            },
+            y: {
+                ticks: {
+                    callback: (value: number) => makeHumanReadable(value)
+                }
+            }
+        },
+        plugins: {
+            tooltip: {
+                callbacks: {
+                    label: (context: any) => makeHumanReadable(context.parsed.y),
+                    footer: () => "Click the data-point to see the run's speedrun.com page!"
+                }
+            }
+        }
+    };
 
     return (
         <>
             <h1>{gameName} : {categoryName} - {username}</h1>
             <Link to={`/user/${userId}`} >Back to user</Link>
             <Jumbotron>
-                <Line type='line' data={chartData} options={chartOptions} width={600} height={250} />
+                <Line ref={theChart} type='line' data={chartData} options={chartOptions} />
             </Jumbotron>
         </>
     );
