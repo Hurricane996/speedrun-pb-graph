@@ -1,11 +1,12 @@
 import React from 'react';
 
 import { HashRouter as Router, Route, Link, Switch } from "react-router-dom";
+import GraphPage from './GraphPage';
 
 import HomePage from './HomePage';
 import UserPage from './UserPage'
 
-
+export const SPEEDRUN_COM_URL = "https://speedrun.com/api/v1";
 
 
 const App = () => {
@@ -17,8 +18,11 @@ const App = () => {
       <b>This site is still under construction</b>
 
       <Switch>
-        <Route path="/user/:id">
+        <Route path="/user/:id" exact>
           <UserPage />
+        </Route>
+        <Route path="/graph/:userId/:categoryId" exact>
+          <GraphPage />
         </Route>
         <Route path="/" exact>
           <HomePage/>
@@ -29,4 +33,6 @@ const App = () => {
   );
 }
 
+
 export default App;
+
