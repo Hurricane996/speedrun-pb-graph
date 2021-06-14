@@ -19,7 +19,7 @@ const App = () => {
   return (
     <Router>
       <Navbar bg="dark">
-          <Navbar.Brand href="/"><h6 style={{color: 'white'}}>Speedrun PB Grapher</h6></Navbar.Brand>
+          <Navbar.Brand><Link to="/"><h6 style={{color: 'white'}}>Speedrun PB Grapher</h6></Link></Navbar.Brand>
       </Navbar>
       <Container>
         <Switch>
