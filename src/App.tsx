@@ -6,29 +6,35 @@ import GraphPage from './GraphPage';
 import HomePage from './HomePage';
 import UserPage from './UserPage'
 
+import Container from 'react-bootstrap/Container'
+import { Nav, Navbar } from 'react-bootstrap';
+
+import 'bootstrap/dist/css/bootstrap.min.css';
+
+
 export const SPEEDRUN_COM_URL = "https://speedrun.com/api/v1";
 
 
 const App = () => {
   return (
     <Router>
-      <h1>
-        <Link to="/">Speedrun PB Grapher</Link>
-      </h1>
-      <b>This site is still under construction</b>
-
-      <Switch>
-        <Route path="/user/:id" exact>
-          <UserPage />
-        </Route>
-        <Route path="/graph/:userId/:categoryId" exact>
-          <GraphPage />
-        </Route>
-        <Route path="/" exact>
-          <HomePage/>
-        </Route>
-        <Route>404</Route>
-      </Switch>
+      <Navbar bg="dark">
+          <Navbar.Brand href="/"><h6 style={{color: 'white'}}>Speedrun PB Grapher</h6></Navbar.Brand>
+      </Navbar>
+      <Container>
+        <Switch>
+          <Route path="/user/:id" exact>
+            <UserPage />
+          </Route>
+          <Route path="/graph/:userId/:categoryId" exact>
+            <GraphPage />
+          </Route>
+          <Route path="/" exact>
+            <HomePage/>
+          </Route>
+          <Route>404</Route>
+        </Switch>
+      </Container>
     </Router>
   );
 }

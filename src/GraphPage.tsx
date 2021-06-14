@@ -3,6 +3,14 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import { SPEEDRUN_COM_URL } from './App';
 
+import {Chart, Line} from 'react-chartjs-2'
+
+import 'chartjs-adapter-luxon';
+import { DateTime } from 'luxon';
+import { Link } from 'react-router-dom';
+import { Jumbotron } from 'react-bootstrap';
+
+
 
 interface Run {
     date: Date;
@@ -22,7 +30,32 @@ const makeHumanReadable = (input: number): string => {
     const mString = m < 10 ? `0${m}` : `${m}`;
     const hString = h === 0 ? "" : `${h}:`
 
-    return `${hString}${mString}:${sString}${msString}`
+    const ret = `${hString}${mString}:${sString}${msString}`
+    console.log(ret);
+    return ret;
+}
+
+const chartOptions = {
+    scales: {
+        x: {
+            type: 'time',
+            time: {
+                tooltipFormat: 'DD'
+            }
+        },
+        y: {
+            ticks: {
+                callback: (value: number, index: number, values: number[]) => makeHumanReadable(value)
+            }
+        }
+    },
+    plugins: {
+        tooltip: {
+            callbacks: {
+                label: (context: any) => makeHumanReadable(context.parsed.y)
+            }
+        }
+    }
 }
 
 const GraphPage = () => 
@@ -58,7 +91,7 @@ const GraphPage = () =>
 
             setRuns(runsData.data.data
                 .filter((run: any) => run.status.status !== "rejected")
-                .map((run: any) => ({date: new Date(run.date), time: run.times.primary_t}))
+                .map((run: any) => ({date: DateTime.fromFormat(run.date, "yyyy-MM-dd"), time: run.times.primary_t}))
             )
 
 
@@ -74,16 +107,23 @@ const GraphPage = () =>
     if(isError) return(<p>Encountered error '{errorMessage}'</p>)
     if(isLoading) return (<p>Loading...</p>)
 
+    const chartData = {
+        labels: runs.map(run=>run.date),
+        datasets: [{
+            label: "Time",
+            data: runs.map(run=>run.time),
+            borderColor: 'rgb(255,0,0)',
+        }]
+    }
+
+
     return (
         <>
         <h1>{gameName} : {categoryName} - {username}</h1>
-        <ul>
-            {runs.map((run) => (
-                <li>
-                    {run.date.toUTCString()} : {makeHumanReadable(run.time)}
-                </li>
-            ))}
-        </ul>
+        <Link to={`/user/${userId}`} >Back to user</Link>
+        <Jumbotron>
+            <Line type='line' data={chartData} options={chartOptions} width={600} height={250} />
+        </Jumbotron>
         </>
     )
 }
