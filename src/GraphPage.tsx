@@ -93,6 +93,7 @@ const GraphPage: FC = () =>
             setRuns(runsData.data.data
                 .filter((run: any) => run.status.status !== "rejected")
                 .map((run: any) => ({date: DateTime.fromFormat(run.date, "yyyy-MM-dd"), time: run.times.primary_t}))
+                .sort((first: Run, second: Run) => first.date < second.date ? -1 : 1)
             );
 
 
