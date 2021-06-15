@@ -5,7 +5,7 @@ interface ErrorProps {
     error: string;
 }
 export const ErrorAlert : FC<ErrorProps> = ({error} : ErrorProps) => (
-    <Alert variant="error">An error occured: {error}</Alert>
+    <Alert variant="danger">An error occured: {error}</Alert>
 );
 
 export const LoadingAlert: FC = () => (
