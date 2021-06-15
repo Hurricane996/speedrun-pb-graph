@@ -68,7 +68,7 @@ const UserPage: FC =  () => {
 
             const [userApiData, pbData] = await Promise.all(dataRaw.map((raw) => raw.json()));
 
-            const categoryData: Category[] = await Promise.all(pbData.data.map(async (pb: any) => {
+            const categoryDataPlusNulls: Category[] = await Promise.all(pbData.data.map(async (pb: any) => {
                 if(pb.category.data.type === "per-level") {
                     // TODO implement this
                     return null;
@@ -91,11 +91,12 @@ const UserPage: FC =  () => {
                         subcategoryValueId: value as string,
                         subcategoryValueName: variableData.data.values.values[value as string].label
                     });
-                }))
+                }));
 
                 return category;
             }));
-            const filteredCategoryData: Category[] = categoryData.filter((category: unknown) => category?true:false);
+
+            const categoryData: Category[] = categoryDataPlusNulls.filter((category: unknown) => category?true:false);
 
             setIsLoading(false);
 
