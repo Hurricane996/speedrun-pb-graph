@@ -3,9 +3,8 @@ import React, { useEffect, useState, FC } from "react";
 import { useParams } from "react-router";
 import { Link } from "react-router-dom";
 import { ErrorAlert, LoadingAlert } from "./Alerts";
-
 import {SPEEDRUN_COM_URL} from "./App";
-
+import { SRCResult, SRCUser } from "./SRCQueryResults";
 
 interface Result {
     id: string;
@@ -23,17 +22,16 @@ const SearchPage: FC = () => {
 
 
     const getInfo = async () => {
-        setIsLoading(true);
         try {
 
             const raw_data = await fetchp(`${SPEEDRUN_COM_URL}/users?name=${query}`, {timeout: 30000});
-            const data = await raw_data.json();
+            const data = await raw_data.json<SRCResult<SRCUser[]>>();
 
             setResults(data.data.map(
-                ({id, names}: any) => ({
+                ({id, names}) => ({
                     id, 
                     name: names.international
-                })
+                }) 
             ));
 
             setIsLoading(false);

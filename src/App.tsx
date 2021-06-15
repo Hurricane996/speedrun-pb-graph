@@ -1,6 +1,6 @@
 import React, { FC } from "react";
 
-import { HashRouter as Router, Route, Link, Switch } from "react-router-dom";
+import { HashRouter as Router, Route, Switch } from "react-router-dom";
 import GraphPage from "./GraphPage";
 
 import HomePage from "./HomePage";
@@ -12,7 +12,6 @@ import { Nav, Navbar } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import SearchPage from "./SearchPage";
 import SearchComponent from "./SearchComponent";
-import NavbarCollapse from "react-bootstrap/esm/NavbarCollapse";
 import { Github } from "react-bootstrap-icons";
 
 
@@ -37,8 +36,11 @@ const App : FC = ()  => {
                     <Route path="/user/:id" exact>
                         <UserPage />
                     </Route>
+                    <Route path="/graph/il/:userId/:levelId/:categoryId" exact>
+                        <GraphPage isIL={true}/>
+                    </Route>
                     <Route path="/graph/:userId/:categoryId" exact>
-                        <GraphPage />
+                        <GraphPage isIL={false}/>
                     </Route>
                     <Route path="/search/:query" exact>
                         <SearchPage />
