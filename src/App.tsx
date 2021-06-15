@@ -10,6 +10,7 @@ import Container from "react-bootstrap/Container";
 import { Nav, Navbar } from "react-bootstrap";
 
 import "bootstrap/dist/css/bootstrap.min.css";
+import SearchPage from "./SearchPage";
 
 
 export const SPEEDRUN_COM_URL = "https://speedrun.com/api/v1";
@@ -29,6 +30,9 @@ const App : FC = ()  => {
                     </Route>
                     <Route path="/graph/:userId/:categoryId" exact>
                         <GraphPage />
+                    </Route>
+                    <Route path="/search/:query" exact>
+                        <SearchPage />
                     </Route>
                     <Route path="/" exact>
                         <HomePage/>

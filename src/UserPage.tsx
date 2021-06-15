@@ -1,6 +1,7 @@
-import axios from "axios-jsonp-pro";
+import fetchp from "fetch-jsonp";
 import React, { FC, useEffect, useState } from "react";
 import {Link, useParams} from "react-router-dom";
+import { ErrorAlert, LoadingAlert } from "./Alerts";
 import { SPEEDRUN_COM_URL } from "./App";
 
 interface Category {
@@ -13,9 +14,7 @@ interface Category {
 interface UserData {
     id: string;
     name: string;
-
     categories: Category[]
-
 }
 
 const UserPage: FC =  () => {
@@ -27,19 +26,17 @@ const UserPage: FC =  () => {
 
     const [userData, setUserData] = useState<UserData | null>(null);
 
-
     const getUserData = async () => {
         try {
- 
 
-            const [userApiData, pbData] = await Promise.all([
-                axios.jsonp(`${SPEEDRUN_COM_URL}/users/${id}?callback=callback`),
-                axios.jsonp(`${SPEEDRUN_COM_URL}/users/${id}/personal-bests?embed=game,category&callback=callback`)
+            const dataRaw = await Promise.all([
+                fetchp(`${SPEEDRUN_COM_URL}/users/${id}?callback=callback`),
+                fetchp(`${SPEEDRUN_COM_URL}/users/${id}/personal-bests?embed=game,category&callback=callback`)
             ]);
 
-            setIsLoading(false);
+            const [userApiData, pbData] = await Promise.all(dataRaw.map((raw) => raw.json()));
 
-            console.log(pbData.data);
+            setIsLoading(false);
 
             setUserData({
                 id: userApiData.data.id,
@@ -62,11 +59,9 @@ const UserPage: FC =  () => {
 
     useEffect(()=>{getUserData();},[]);
 
-    if(isError) return (<p>Error {errorMessage} occured.</p>);
-    if(isLoading) return (<p>Loading...</p>);
-
-    console.log(userData);
-
+    if(isError) return <ErrorAlert error={errorMessage} />;
+    if(isLoading) return <LoadingAlert/>;
+    
     return (<>
         <h2>{userData?.name}</h2>
         <ul>

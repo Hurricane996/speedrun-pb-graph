@@ -1,15 +1,13 @@
-import axios from "axios-jsonp-pro";
+import fetchp from "fetch-jsonp";
 import React, { FC, useEffect, useState, useRef } from "react";
 import { useParams } from "react-router";
 import { SPEEDRUN_COM_URL } from "./App";
-
 import { Line} from "react-chartjs-2";
-
 import "chartjs-adapter-luxon";
 import { DateTime } from "luxon";
 import { Link } from "react-router-dom";
 import { Jumbotron } from "react-bootstrap";
-
+import { ErrorAlert, LoadingAlert } from "./Alerts";
 
 
 
@@ -55,13 +53,13 @@ const GraphPage: FC = () =>
 
     const getData = async () => {
         try {
-            const [categoryData, userData, runsData] = await Promise.all([
-                axios.jsonp(`${SPEEDRUN_COM_URL}/categories/${categoryId}?embed=game&callback=callback`),
-                axios.jsonp(`${SPEEDRUN_COM_URL}/users/${userId}?callback=callback`),
-                axios.jsonp(`${SPEEDRUN_COM_URL}/runs?user=${userId}&category=${categoryId}&max=200&callback=callback`)
+            const dataRaw = await Promise.all([
+                fetchp(`${SPEEDRUN_COM_URL}/categories/${categoryId}?embed=game&callback=callback`),
+                fetchp(`${SPEEDRUN_COM_URL}/users/${userId}?callback=callback`),
+                fetchp(`${SPEEDRUN_COM_URL}/runs?user=${userId}&category=${categoryId}&max=200&callback=callback`)
             ]);
+            const [categoryData, userData, runsData] = await Promise.all(dataRaw.map((raw) => raw.json()));
 
-            console.log(runsData);
             setGameName(categoryData.data.game.data.names.international);
             setCategoryName(categoryData.data.name);
 
@@ -82,19 +80,17 @@ const GraphPage: FC = () =>
                         : (first.date < second.date ? -1 : 1)               
                 ))
             );
-
-
         } catch (e) {
             setIsError(true);
             setErrorMessage(e.message);
-            console.log(e);
+            console.error(e);
         }
     };
 
     useEffect(() => {getData();}, []);
     
-    if(isError) return(<p>Encountered error &quot;{errorMessage}&quot;</p>);
-    if(isLoading) return (<p>Loading...</p>);
+    if(isError) return <ErrorAlert error={errorMessage} />;
+    if(isLoading) return <LoadingAlert/>;
 
     const chartData = {
         labels: runs.map(run=>run.date),
