@@ -4,7 +4,13 @@ import {Link, useParams} from "react-router-dom";
 import { ErrorAlert, LoadingAlert } from "./Alerts";
 import { SPEEDRUN_COM_URL } from "./App";
 
-// this is a bad name. It actually corresponds to subcategories.
+
+interface Game {
+    name: string,
+    id: string,
+    categories: Category[];
+}
+
 interface Category {
     gameName: string;
     gameId: string;
@@ -23,7 +29,7 @@ interface Subcategory {
 interface UserData {
     id: string;
     name: string;
-    categories: Category[]
+    games: Game[];
 }
 
 interface CategoryLinkProps {
@@ -43,9 +49,22 @@ const CategoryLink: FC<CategoryLinkProps> = ({category, userData}: CategoryLinkP
     return (
         <li key={category.categoryId}>
             <Link to={`/graph/${userData?.id}/${category.categoryId}?${subcategoryLinkString}`}>
-                {category.gameName}: {category.categoryName} {category.subcategories.length > 0 ? `- ${subcategoryTextString}` : ""}
+                {category.categoryName} {category.subcategories.length > 0 ? `- ${subcategoryTextString}` : ""}
             </Link>
         </li>
+    );
+};
+
+interface GameLinkSetProps {
+    game: Game;
+    userData: UserData;
+}
+const GameLinkSet: FC<GameLinkSetProps> = ({game, userData}: GameLinkSetProps) => {
+    return (
+        <>
+            <h3> {game.name} </h3>
+            {game.categories.map(category => (<CategoryLink key={category.categoryId} category={category} userData={userData}/>))}
+        </>
     );
 };
 
@@ -68,7 +87,7 @@ const UserPage: FC =  () => {
 
             const [userApiData, pbData] = await Promise.all(dataRaw.map((raw) => raw.json()));
 
-            const categoryDataPlusNulls: Category[] = await Promise.all(pbData.data.map(async (pb: any) => {
+            const categoryData: Category[] = await Promise.all(pbData.data.map(async (pb: any) => {
                 if(pb.category.data.type === "per-level") {
                     // TODO implement this
                     return null;
@@ -96,27 +115,36 @@ const UserPage: FC =  () => {
                 return category;
             }));
 
-            const categoryData: Category[] = categoryDataPlusNulls.filter((category: unknown) => category?true:false)
-                .sort((a: Category, b: Category) => {
-                    //compare game names
-                    if(a.gameName < b.gameName) return -1;
-                    if(a.gameName > b.gameName) return 1;
-                    // game names are the same; compare category names
-                    if(a.categoryName < b.categoryName) return -1;
-                    if(a.categoryName > b.categoryName) return 1;
-                    // category names are also the same; compare first subcategory name
-                    if(a.subcategories[0].subcategoryValueName < b.subcategories[0].subcategoryValueName) return -1;
-                    if(a.subcategories[0].subcategoryValueName > b.subcategories[0].subcategoryValueName) return 1;
-                    // past that, nobody cares
-                    return 0;
+            const games: Game[] = [];
+
+            categoryData.forEach(category=> {
+                if(category===null) return;
+                let added = false;
+                games.forEach(game => {
+                    if(game.id === category.gameId) {
+                        game.categories.push(category);
+                        added = true;
+                    }
                 });
 
+                if(!added) games.push({
+                    id: category.gameId,
+                    name: category.gameName,
+                    categories: [category]
+                });
+            });
+
+            games.map(game=>({
+                ...game,
+                categories: game.categories.sort((a,b) => a.categoryName.localeCompare(b.categoryName))
+            }));
+            
             setIsLoading(false);
 
             setUserData({
                 id: userApiData.data.id,
                 name: userApiData.data.names.international,
-                categories: categoryData
+                games: games
             });
         } catch (error) {
             setIsError(true);
@@ -134,11 +162,9 @@ const UserPage: FC =  () => {
     
     return (<>
         <h2>Categories for {userData?.name}</h2>
-        <ul>
-            {userData?.categories.map((category: Category) => (
-                <CategoryLink category={category} userData={userData} key={category.categoryId} />
-            ))}
-        </ul>
+        {userData?.games.map((game: Game) => (
+            <GameLinkSet game={game} userData={userData} key={game.id} />
+        ))}
     </>);
 
 };
