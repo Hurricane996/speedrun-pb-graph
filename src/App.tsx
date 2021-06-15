@@ -11,6 +11,9 @@ import { Nav, Navbar } from "react-bootstrap";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import SearchPage from "./SearchPage";
+import SearchComponent from "./SearchComponent";
+import NavbarCollapse from "react-bootstrap/esm/NavbarCollapse";
+import { Github } from "react-bootstrap-icons";
 
 
 export const SPEEDRUN_COM_URL = "https://speedrun.com/api/v1";
@@ -19,9 +22,16 @@ export const SPEEDRUN_COM_URL = "https://speedrun.com/api/v1";
 const App : FC = ()  => {
     return (
         <Router>
-            <Navbar bg="dark">
-                <Navbar.Brand><Link to="/" style={{textDecoration: "none"}}><h4 style={{color: "white"}}>Speedrun PB Grapher</h4></Link></Navbar.Brand>
-                <Nav.Item><Link to="/" style={{color:"white", textDecoration:"none"}}>Home</Link></Nav.Item>
+            <Navbar bg="dark" expand="lg" className="mb-4" style={{justifyContent:"space-between"}}>
+                <Nav>
+                    <Navbar.Brand href="#/" style={{color: "white"}}>Speedrun PB Grapher</Navbar.Brand>
+                    <Nav.Link href="#/" style={{color: "white"}}>Home</Nav.Link>
+                </Nav>
+                
+                <Nav className="float-right">
+                    <SearchComponent/>
+                    <Nav.Link href="https://github.com/Hurricane996/speedrun-pb-graph"><Github style={{color: "white"}} className="ml-auto"/></Nav.Link>
+                </Nav>
             </Navbar>
             <Container>
                 <Switch>

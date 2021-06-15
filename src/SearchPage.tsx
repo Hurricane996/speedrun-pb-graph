@@ -51,11 +51,11 @@ const SearchPage: FC = () => {
 
     return (
         <>
-            <h3>Users:</h3>
+            <h3>Results for {query}:</h3>
             <ul>
                 {results.length > 0 ? results.map(({id, name}) => (
                     <li key={id}><Link to={`/user/${id}`}>{name} </Link></li>
-                )) : (<p>No users found</p>)}
+                )) : (<p>No users found. <Link to="/">Search again?</Link></p>)}
             </ul>
         </>
     );

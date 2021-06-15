@@ -63,7 +63,7 @@ const UserPage: FC =  () => {
     if(isLoading) return <LoadingAlert/>;
     
     return (<>
-        <h2>{userData?.name}</h2>
+        <h2>Categories for {userData?.name}</h2>
         <ul>
             {userData?.categories.map((category: Category) => (
                 <li key={category.categoryId}><Link to={`/graph/${userData?.id}/${category.categoryId}`}>{category.gameName}: {category.categoryName}</Link></li>
