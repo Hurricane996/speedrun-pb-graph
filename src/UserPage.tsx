@@ -43,7 +43,7 @@ const CategoryLink: FC<CategoryLinkProps> = ({category, userData}: CategoryLinkP
     return (
         <li key={category.categoryId}>
             <Link to={`/graph/${userData?.id}/${category.categoryId}?${subcategoryLinkString}`}>
-                {category.gameName}: {category.categoryName} - {subcategoryTextString}
+                {category.gameName}: {category.categoryName} {category.subcategories.length > 0 ? `- ${subcategoryTextString}` : ""}
             </Link>
         </li>
     );
@@ -96,7 +96,20 @@ const UserPage: FC =  () => {
                 return category;
             }));
 
-            const categoryData: Category[] = categoryDataPlusNulls.filter((category: unknown) => category?true:false);
+            const categoryData: Category[] = categoryDataPlusNulls.filter((category: unknown) => category?true:false)
+                .sort((a: Category, b: Category) => {
+                    //compare game names
+                    if(a.gameName < b.gameName) return -1;
+                    if(a.gameName > b.gameName) return 1;
+                    // game names are the same; compare category names
+                    if(a.categoryName < b.categoryName) return -1;
+                    if(a.categoryName > b.categoryName) return 1;
+                    // category names are also the same; compare first subcategory name
+                    if(a.subcategories[0].subcategoryValueName < b.subcategories[0].subcategoryValueName) return -1;
+                    if(a.subcategories[0].subcategoryValueName > b.subcategories[0].subcategoryValueName) return 1;
+                    // past that, nobody cares
+                    return 0;
+                });
 
             setIsLoading(false);
 
