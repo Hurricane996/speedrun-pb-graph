@@ -44,7 +44,7 @@ const SearchPage: FC = () => {
         }
     };
 
-    useEffect(() => {getInfo();} , []);
+    useEffect(() => {getInfo();} , [query]);
 
     if(isError) return <ErrorAlert error={errorMessage} />;
     if(isLoading) return <LoadingAlert/>;
