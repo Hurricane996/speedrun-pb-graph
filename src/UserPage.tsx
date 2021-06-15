@@ -62,8 +62,8 @@ const UserPage: FC =  () => {
         try {
 
             const dataRaw = await Promise.all([
-                fetchp(`${SPEEDRUN_COM_URL}/users/${id}?callback=callback`,{timeout: 30000}),
-                fetchp(`${SPEEDRUN_COM_URL}/users/${id}/personal-bests?embed=game,category&callback=callback`,{timeout: 30000})
+                fetchp(`${SPEEDRUN_COM_URL}/users/${id}`,{timeout: 30000}),
+                fetchp(`${SPEEDRUN_COM_URL}/users/${id}/personal-bests?embed=game,category`,{timeout: 30000})
             ]);
 
             const [userApiData, pbData] = await Promise.all(dataRaw.map((raw) => raw.json()));

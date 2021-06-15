@@ -57,9 +57,9 @@ const GraphPage: FC = () =>
 
         try {
             const dataRaw = await Promise.all([
-                fetchp(`${SPEEDRUN_COM_URL}/categories/${categoryId}?embed=game&callback=callback`,{timeout: 30000}),
-                fetchp(`${SPEEDRUN_COM_URL}/users/${userId}?callback=callback`,{timeout: 30000}),
-                fetchp(`${SPEEDRUN_COM_URL}/runs?user=${userId}&category=${categoryId}&max=200&callback=callback`,{timeout: 30000})
+                fetchp(`${SPEEDRUN_COM_URL}/categories/${categoryId}?embed=game`,{timeout: 30000}),
+                fetchp(`${SPEEDRUN_COM_URL}/users/${userId}`,{timeout: 30000}),
+                fetchp(`${SPEEDRUN_COM_URL}/runs?user=${userId}&category=${categoryId}&max=200`,{timeout: 30000})
             ]);
             const [categoryData, userData, runsData] = await Promise.all(dataRaw.map((raw) => raw.json()));
 
@@ -90,6 +90,7 @@ const GraphPage: FC = () =>
                     time: run.times.primary_t,
                     id: run.id
                 }))
+                // sort the runs, otherwise it will play connect the dots
                 .sort((first: Run, second: Run) => (
                     first.date === second.date
                         ? (first.time < second.time ? -1 : 1)
