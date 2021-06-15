@@ -25,7 +25,7 @@ const SearchPage: FC = () => {
     const getInfo = async () => {
         try {
 
-            const raw_data = await fetchp(`${SPEEDRUN_COM_URL}/users?name=${query}`, {timeout: 20000});
+            const raw_data = await fetchp(`${SPEEDRUN_COM_URL}/users?name=${query}`, {timeout: 30000});
             const data = await raw_data.json();
 
             setResults(data.data.map(

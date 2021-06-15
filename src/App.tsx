@@ -27,7 +27,6 @@ const App : FC = ()  => {
                     <Navbar.Brand href="#/" style={{color: "white"}}>Speedrun PB Grapher</Navbar.Brand>
                     <Nav.Link href="#/" style={{color: "white"}}>Home</Nav.Link>
                 </Nav>
-                
                 <Nav className="float-right">
                     <SearchComponent/>
                     <Nav.Link href="https://github.com/Hurricane996/speedrun-pb-graph"><Github style={{color: "white"}} className="ml-auto"/></Nav.Link>

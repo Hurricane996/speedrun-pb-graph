@@ -1,6 +1,6 @@
 import fetchp from "fetch-jsonp";
 import React, { FC, useEffect, useState, useRef } from "react";
-import { useParams } from "react-router";
+import { useLocation, useParams } from "react-router";
 import { SPEEDRUN_COM_URL } from "./App";
 import { Line} from "react-chartjs-2";
 import "chartjs-adapter-luxon";
@@ -8,8 +8,6 @@ import { DateTime } from "luxon";
 import { Link } from "react-router-dom";
 import { Jumbotron } from "react-bootstrap";
 import { ErrorAlert, LoadingAlert } from "./Alerts";
-
-
 
 interface Run {
     date: Date;
@@ -40,6 +38,8 @@ const GraphPage: FC = () =>
     const {userId, categoryId} = useParams<{userId?: string, categoryId?: string}>();
     const theChart = useRef<typeof Line>(null);
 
+    const search = new URLSearchParams(useLocation().search);
+
 
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [isError, setIsError] = useState<boolean>(false);
@@ -51,12 +51,14 @@ const GraphPage: FC = () =>
 
     const [runs, setRuns] = useState<Run[]>([]);
 
+
     const getData = async () => {
+
         try {
             const dataRaw = await Promise.all([
-                fetchp(`${SPEEDRUN_COM_URL}/categories/${categoryId}?embed=game&callback=callback`),
-                fetchp(`${SPEEDRUN_COM_URL}/users/${userId}?callback=callback`),
-                fetchp(`${SPEEDRUN_COM_URL}/runs?user=${userId}&category=${categoryId}&max=200&callback=callback`)
+                fetchp(`${SPEEDRUN_COM_URL}/categories/${categoryId}?embed=game&callback=callback`,{timeout: 30000}),
+                fetchp(`${SPEEDRUN_COM_URL}/users/${userId}?callback=callback`,{timeout: 30000}),
+                fetchp(`${SPEEDRUN_COM_URL}/runs?user=${userId}&category=${categoryId}&max=200&callback=callback`,{timeout: 30000})
             ]);
             const [categoryData, userData, runsData] = await Promise.all(dataRaw.map((raw) => raw.json()));
 
@@ -68,7 +70,10 @@ const GraphPage: FC = () =>
             setIsLoading(false);
 
             setRuns(runsData.data
+                // filter out rejected runs
                 .filter((run: any) => run.status.status !== "rejected")
+                // only accept runs of the suggested subcategory
+                .filter((run: any) => Object.entries(run.values).every(([runKey, runValue] :[string, any]) => runValue as string === search.get(runKey)))
                 .map((run: any) => ({
                     date: DateTime.fromFormat(run.date, "yyyy-MM-dd", {zone: "UTC"}), 
                     time: run.times.primary_t,

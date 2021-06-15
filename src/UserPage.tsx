@@ -4,11 +4,20 @@ import {Link, useParams} from "react-router-dom";
 import { ErrorAlert, LoadingAlert } from "./Alerts";
 import { SPEEDRUN_COM_URL } from "./App";
 
+// this is a bad name. It actually corresponds to subcategories.
 interface Category {
     gameName: string;
     gameId: string;
     categoryName: string;
     categoryId: string;
+
+    subcategories: Subcategory[];
+}
+
+interface Subcategory {
+    subcategoryKeyId: string;
+    subcategoryValueId: string;
+    subcategoryValueName: string;
 }
 
 interface UserData {
@@ -16,6 +25,29 @@ interface UserData {
     name: string;
     categories: Category[]
 }
+
+interface CategoryLinkProps {
+    category: Category;
+    userData: UserData;
+}
+
+const CategoryLink: FC<CategoryLinkProps> = ({category, userData}: CategoryLinkProps) => {
+    const subcategoryLinkString = category.subcategories.map((subcategory) => 
+        `${subcategory.subcategoryKeyId}=${subcategory.subcategoryValueId}`
+    ).join("&");
+
+    const subcategoryTextString = category.subcategories
+        .map((subcategory) => subcategory.subcategoryValueName)
+        .join(", ");
+
+    return (
+        <li key={category.categoryId}>
+            <Link to={`/graph/${userData?.id}/${category.categoryId}?${subcategoryLinkString}`}>
+                {category.gameName}: {category.categoryName} - {subcategoryTextString}
+            </Link>
+        </li>
+    );
+};
 
 const UserPage: FC =  () => {
     const {id} = useParams<{id?: string}>();
@@ -30,25 +62,42 @@ const UserPage: FC =  () => {
         try {
 
             const dataRaw = await Promise.all([
-                fetchp(`${SPEEDRUN_COM_URL}/users/${id}?callback=callback`),
-                fetchp(`${SPEEDRUN_COM_URL}/users/${id}/personal-bests?embed=game,category&callback=callback`)
+                fetchp(`${SPEEDRUN_COM_URL}/users/${id}?callback=callback`,{timeout: 30000}),
+                fetchp(`${SPEEDRUN_COM_URL}/users/${id}/personal-bests?embed=game,category&callback=callback`,{timeout: 30000})
             ]);
 
             const [userApiData, pbData] = await Promise.all(dataRaw.map((raw) => raw.json()));
+
+            const categoryData: Category[] = await Promise.all(pbData.data.map(async (pb: any) => {
+                const category: Category = {
+                    gameName: pb.game.data.names.international,
+                    gameId:  pb.game.data.id,
+                    categoryName: pb.category.data.name,
+                    categoryId: pb.category.data.id,
+
+                    subcategories: []
+                };
+                
+                await Promise.all(Object.entries(pb.run.values).map(async ([key, value]: [string, unknown]) => {
+                    const variableDataRaw = await fetchp(`${SPEEDRUN_COM_URL}/variables/${key}`);
+                    const variableData = await variableDataRaw.json();
+                    
+                    category.subcategories.push({
+                        subcategoryKeyId: key,
+                        subcategoryValueId: value as string,
+                        subcategoryValueName: variableData.data.values.values[value as string].label
+                    });
+                }));
+
+                return category;
+            }));
 
             setIsLoading(false);
 
             setUserData({
                 id: userApiData.data.id,
                 name: userApiData.data.names.international,
-                categories: pbData.data
-                    .filter(({category} : any) => category.data.type === "per-game")
-                    .map(({game, category}: any) => ({
-                        gameName: game.data.names.international,
-                        gameId: game.data.id,
-                        categoryName: category.data.name,
-                        categoryId: category.data.id
-                    }))
+                categories: categoryData
             });
         } catch (error) {
             setIsError(true);
@@ -61,12 +110,14 @@ const UserPage: FC =  () => {
 
     if(isError) return <ErrorAlert error={errorMessage} />;
     if(isLoading) return <LoadingAlert/>;
+
+
     
     return (<>
         <h2>Categories for {userData?.name}</h2>
         <ul>
             {userData?.categories.map((category: Category) => (
-                <li key={category.categoryId}><Link to={`/graph/${userData?.id}/${category.categoryId}`}>{category.gameName}: {category.categoryName}</Link></li>
+                <CategoryLink category={category} userData={userData} key={category.categoryId} />
             ))}
         </ul>
     </>);

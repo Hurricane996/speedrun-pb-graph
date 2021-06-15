@@ -5,7 +5,6 @@ import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 import { useHistory } from "react-router";
 
-
 const SearchComponent: FC = () => {
     const [search, setSearch] = useState<string>("");
     const history = useHistory();
