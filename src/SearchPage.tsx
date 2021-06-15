@@ -28,7 +28,7 @@ const SearchPage: FC = () => {
             const raw_data = await fetchp(`${SPEEDRUN_COM_URL}/users?name=${query}`, {timeout: 20000});
             const data = await raw_data.json();
 
-            setResults(data.data.slice(0,5).map(
+            setResults(data.data.map(
                 ({id, names}: any) => ({
                     id, 
                     name: names.international
