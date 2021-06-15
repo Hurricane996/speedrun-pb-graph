@@ -69,6 +69,10 @@ const UserPage: FC =  () => {
             const [userApiData, pbData] = await Promise.all(dataRaw.map((raw) => raw.json()));
 
             const categoryData: Category[] = await Promise.all(pbData.data.map(async (pb: any) => {
+                if(pb.category.data.type === "per-level") {
+                    // TODO implement this
+                    return null;
+                }
                 const category: Category = {
                     gameName: pb.game.data.names.international,
                     gameId:  pb.game.data.id,
@@ -87,10 +91,11 @@ const UserPage: FC =  () => {
                         subcategoryValueId: value as string,
                         subcategoryValueName: variableData.data.values.values[value as string].label
                     });
-                }));
+                }))
 
                 return category;
             }));
+            const filteredCategoryData: Category[] = categoryData.filter((category: unknown) => category?true:false);
 
             setIsLoading(false);
 
