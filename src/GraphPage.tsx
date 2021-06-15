@@ -48,6 +48,7 @@ const GraphPage: FC = () =>
     const [gameName, setGameName] = useState<string>("");
     const [categoryName, setCategoryName] = useState<string>("");
     const [username, setUsername] = useState<string>("");
+    const [subcategoryString, setSubcategoryString] = useState<string>("");
 
     const [runs, setRuns] = useState<Run[]>([]);
 
@@ -62,8 +63,18 @@ const GraphPage: FC = () =>
             ]);
             const [categoryData, userData, runsData] = await Promise.all(dataRaw.map((raw) => raw.json()));
 
+            
+
+            const subcategoryString = (await Promise.all([...search.entries()].map(async ([key,value]: [string,any]) : Promise<string> => {
+                const dataRaw = await fetchp(`${SPEEDRUN_COM_URL}/variables/${key}`);
+                const data = await dataRaw.json();
+                return data.data.values.values[value as string].label;
+            }))).join(", ");
+
             setGameName(categoryData.data.game.data.names.international);
             setCategoryName(categoryData.data.name);
+
+            setSubcategoryString(subcategoryString);
 
             setUsername(userData.data.names.international);
 
@@ -141,7 +152,7 @@ const GraphPage: FC = () =>
 
     return (
         <>
-            <h1>{gameName} : {categoryName} - {username}</h1>
+            <h1>{gameName} : {categoryName} - {subcategoryString} - {username}</h1>
             <Link to={`/user/${userId}`} >Back to user</Link>
             <p><b> Click a data-point to see the associated run&apos;s speedrun.com page!</b></p>
             <Jumbotron>
