@@ -23,6 +23,7 @@ const SearchPage: FC = () => {
 
 
     const getInfo = async () => {
+        setIsLoading(true);
         try {
 
             const raw_data = await fetchp(`${SPEEDRUN_COM_URL}/users?name=${query}`, {timeout: 30000});
