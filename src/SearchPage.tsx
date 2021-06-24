@@ -21,11 +21,25 @@ const SearchPage: FC = () => {
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
 
-    const getInfo = async () => {
-        try {
+    const [exactMatch, setExactMatch] = useState<Result|null>(null);
 
-            const raw_data = await fetchp(`${SPEEDRUN_COM_URL}/users?name=${query}`, {timeout: 30000});
-            const data = await raw_data.json<SRCResult<SRCUser[]>>();
+
+    const getInfo = async () => {
+        try {  
+            const rawLookupData = await fetchp(`${SPEEDRUN_COM_URL}/users?lookup=${query}`, {timeout: 30000});
+            const lookupData = await rawLookupData.json<SRCResult<SRCUser[]>>();
+
+            if(lookupData.data.length > 0) {
+                setExactMatch({
+                    id: lookupData.data[0].id,
+                    name: lookupData.data[0].names.international
+                });
+            }
+
+
+
+            const rawData = await fetchp(`${SPEEDRUN_COM_URL}/users?name=${query}`, {timeout: 30000});
+            const data = await rawData.json<SRCResult<SRCUser[]>>();
 
             setResults(data.data.map(
                 ({id, names}) => ({
@@ -52,6 +66,7 @@ const SearchPage: FC = () => {
         <>
             <h3>Results for {query}:</h3>
             <ul>
+                {exactMatch && <p><b>An exact match was found: <Link to={`/user/${exactMatch.id}`}>{exactMatch.name} </Link></b></p> }
                 {results.length > 0 ? results.map(({id, name}) => (
                     <li key={id}><Link to={`/user/${id}`}>{name} </Link></li>
                 )) : (<p>No users found. <Link to="/">Search again?</Link></p>)}

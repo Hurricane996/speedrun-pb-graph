@@ -3,7 +3,7 @@ import React, { Dispatch, FC, SetStateAction, useEffect, useState } from "react"
 import {Link, useParams} from "react-router-dom";
 import { ErrorAlert, LoadingAlert } from "./Alerts";
 import { SPEEDRUN_COM_URL } from "./App";
-import _ from "lodash";
+import { groupBy } from "lodash";
 import { SRCResult, SRCUser, SRCVariableSet, SRCPB_gcl } from "./SRCQueryResults";
 
 
@@ -146,7 +146,7 @@ const getUserData = async (
             pbDataRaw.json<SRCResult<SRCPB_gcl[]>>()
         ]);
 
-        const pbDataGrouped  = _.groupBy(pbData.data, pb => pb.category.data.type);
+        const pbDataGrouped  = groupBy(pbData.data, pb => pb.category.data.type);
 
         const pbDataFullGame = pbDataGrouped["per-game"];
         const pbDataIL = pbDataGrouped["per-level"];
@@ -189,28 +189,27 @@ const getUserData = async (
         });
 
 
-        const gameIds: string[] = [...new Set<string>(pbData.data.map(pb => pb.game.data.id))];
+        const games: Game[] = [...new Set<Game>(pbData.data.map(pb => ({
+            id: pb.game.data.id,
+            name: pb.game.data.names.international,
+            fullGameCategories: [],
+            levelCategories: []
+        })))].map(({id, name}) => ({
+            id,
+            name,
+            fullGameCategories: categoryDataFullGame.filter(category => category.gameId === id),
+            levelCategories: categoryDataILs.filter(category => category.gameId === id)
+        }));
 
-        const games = gameIds.map(gameId => {
-            const fullGameCategories: Category[] = categoryDataFullGame.filter(category => category.gameId === gameId);
-            const levelCategories: LevelCategory[] = categoryDataILs.filter(category => category.gameId === gameId);
-
-            return {
-                id: gameId,
-                name: fullGameCategories[0].gameName,
-                fullGameCategories,
-                levelCategories
-            };
-        });
-
-        
-        setIsLoading(false);
 
         setUserData({
             id: userApiData.data.id,
             name: userApiData.data.names.international,
             games: games
         });
+      
+        setIsLoading(false);
+
     } catch (error) {
         setIsError(true);
         setErrorMessage(error.message);
