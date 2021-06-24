@@ -132,7 +132,7 @@ const getUserData = async (
     setIsLoading: Dispatch<SetStateAction<boolean>> , 
     setIsError: Dispatch<SetStateAction<boolean>>, 
     setErrorMessage: Dispatch<SetStateAction<string>>, 
-    setUserData: Dispatch<SetStateAction<UserData| null>> 
+    setData: Dispatch<SetStateAction<UserData| null>> 
 ) => {
     try {
 
@@ -204,7 +204,7 @@ const getUserData = async (
         });
 
 
-        setUserData({
+        setData({
             id: userApiData.data.id,
             name: userApiData.data.names.international,
             games: games
