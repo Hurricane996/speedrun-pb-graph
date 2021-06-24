@@ -1,4 +1,4 @@
-export const makeHumanReadable = (input: number): string => {
+const makeTimeHumanReadable = (input: number): string => {
     const ms = input % 1;
     const s = Math.floor(input) % 60;
     const m = Math.floor(input / 60) % 60;
@@ -13,3 +13,4 @@ export const makeHumanReadable = (input: number): string => {
 
     return `${hString}${mString}:${sString}${msString}`;
 };
+export default makeTimeHumanReadable;

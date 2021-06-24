@@ -10,8 +10,9 @@ import { Jumbotron } from "react-bootstrap";
 import { ErrorAlert, LoadingAlert } from "../components/Alerts";
 import { SRCCategory_g, SRCLevel, SRCResult, SRCRun, SRCUser, SRCVariable } from "../types/SRCQueryResults";
 import Chart from "chart.js";
-import { makeHumanReadable } from "../utils/makeHumanReadable";
+import makeTimeHumanReadable from "../utils/makeTimeHumanReadable";
 import useFetcher, { Fetcher } from "../utils/useFetcher";
+import insertIfExists from "../utils/insertIfExists";
 
 interface FetchedData {
     gameName: string,
@@ -24,7 +25,6 @@ interface FetchedData {
         time: number;
         id: string;
     }[]
-
 }
 
 const fetcher: Fetcher<{userId: string|undefined, categoryId: string|undefined, levelId: string|undefined, searchParams: URLSearchParams},FetchedData> = async ({userId, categoryId, levelId, searchParams}) => {
@@ -34,8 +34,9 @@ const fetcher: Fetcher<{userId: string|undefined, categoryId: string|undefined, 
     const [categoryDataRaw, userDataRaw, runsDataRaw] = await Promise.all([
         fetchp(`${SPEEDRUN_COM_URL}/categories/${categoryId}?embed=game`,{timeout: 30000}),
         fetchp(`${SPEEDRUN_COM_URL}/users/${userId}`,{timeout: 30000}),
-        fetchp(`${SPEEDRUN_COM_URL}/runs?user=${userId}&category=${categoryId}&max=200` + (levelId ? `&levelId=${levelId}` : ""),{timeout: 30000})
+        fetchp(`${SPEEDRUN_COM_URL}/runs?user=${userId}${insertIfExists(levelId, "&level=", true)}&category=${categoryId}&max=200`,{timeout: 30000})
     ]);
+
 
     const [categoryData, userData, runsData] = await Promise.all([
         categoryDataRaw.json<SRCResult<SRCCategory_g>>(),
@@ -85,8 +86,6 @@ const fetcher: Fetcher<{userId: string|undefined, categoryId: string|undefined, 
     };
 };
 
-
-
 const GraphPage: FC = () => 
 {
     // note level id will be null when isIL is false.
@@ -132,22 +131,27 @@ const GraphPage: FC = () =>
             y: {
                 ticks: {
                     // if this isn't a number we're *really* fucked
-                    callback: (value: number| string) => makeHumanReadable(value as number)
+                    callback: (value: number| string) => makeTimeHumanReadable(value as number)
                 }
             }
         },
         plugins: {
             tooltip: {
                 callbacks: {
-                    label: (tooltipItem: Chart.TooltipItem<"line">) => makeHumanReadable(tooltipItem.parsed.y)
+                    label: (tooltipItem: Chart.TooltipItem<"line">) => makeTimeHumanReadable(tooltipItem.parsed.y)
                 }
             }
         }
     };
 
+    if(!data) return (<ErrorAlert error="There is no data but no error was thrown. Something is really fucked."></ErrorAlert>);
+
+
+
+
     return (
         <>
-            <h1>{data?.gameName} : {data?.levelName && data.levelName.length > 0 ? data?.levelName+ " " : ""} {data?.categoryName} - {data?.subcategoryString ? data.subcategoryString + " - " : ""}{data?.username}</h1>
+            <h1>{data.gameName}: {insertIfExists(data.levelName," ")}{data.categoryName} - {insertIfExists(data.subcategoryString, " - ")}{data.username}</h1>
             <Link to={`/user/${userId}`} >Back to user</Link>
             <p><b> Click a data-point to see the associated run&apos;s speedrun.com page!</b></p>
             <Jumbotron>

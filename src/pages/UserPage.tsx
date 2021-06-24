@@ -63,7 +63,7 @@ const FullGameCategoryLink: FC<CategoryLinkProps> = ({category, userID}: Categor
     return (
         <li>
             <Link to={`/graph/${userID}/${category.categoryId}?${subcategoryLinkString}`}>
-                {category.categoryName} {category.subcategories.length > 0 ? `- ${subcategoryTextString}` : ""}
+                {category.categoryName} {subcategoryTextString && ` - ${subcategoryTextString}` }
             </Link>
         </li>
     );
@@ -82,7 +82,7 @@ const LevelCategoryLink: FC<LevelCategoryLinkProps> = ({category, userID}: Level
     return (
         <li>
             <Link to={`/graph/il/${userID}/${category.levelId}/${category.categoryId}?${subcategoryLinkString}`}>
-                {category.levelName} {category.categoryName} {category.subcategories.length > 0 ? `- ${subcategoryTextString}` : ""}
+                {category.levelName} {category.categoryName}{subcategoryTextString && ` - ${subcategoryTextString}` }
             </Link>
         </li>
     );
