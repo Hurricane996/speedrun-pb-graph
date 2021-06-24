@@ -15,10 +15,7 @@ interface Game {
     levelCategories: LevelCategory[]
 }
 
-interface LevelCategory extends Category {
-    levelId: string,
-    levelName: string
-}
+
 
 interface Category {
     gameName: string;
@@ -27,6 +24,11 @@ interface Category {
     categoryId: string;
 
     subcategories: Subcategory[];
+}
+
+interface LevelCategory extends Category {
+    levelId: string,
+    levelName: string
 }
 
 interface Subcategory {
@@ -41,77 +43,13 @@ interface UserData {
     games: Game[];
 }
 
-interface CategoryLinkProps {
-    category: Category;
-    userID: string;
-}
+const subcategoryLinkString = (subcategories: Subcategory[]): string => subcategories.length
+    ? "?" + subcategories.map((subcategory) => `${subcategory.subcategoryKeyId}=${subcategory.subcategoryValueId}`).join("&")
+    : "";
 
-interface LevelCategoryLinkProps {
-    category: LevelCategory;
-    userID: string;
-}
-
-const FullGameCategoryLink: FC<CategoryLinkProps> = ({category, userID}: CategoryLinkProps) => {
-    const subcategoryLinkString = category.subcategories.map((subcategory) => 
-        `${subcategory.subcategoryKeyId}=${subcategory.subcategoryValueId}`
-    ).join("&");
-
-    const subcategoryTextString = category.subcategories
-        .map((subcategory) => subcategory.subcategoryValueName)
-        .join(", ");
-
-    return (
-        <li>
-            <Link to={`/graph/${userID}/${category.categoryId}?${subcategoryLinkString}`}>
-                {category.categoryName} {subcategoryTextString && ` - ${subcategoryTextString}` }
-            </Link>
-        </li>
-    );
-};
-
-
-const LevelCategoryLink: FC<LevelCategoryLinkProps> = ({category, userID}: LevelCategoryLinkProps) => {
-    const subcategoryLinkString = category.subcategories.map((subcategory) => 
-        `${subcategory.subcategoryKeyId}=${subcategory.subcategoryValueId}`
-    ).join("&");
-
-    const subcategoryTextString = category.subcategories
-        .map(subcategory => subcategory.subcategoryValueName)
-        .join(", ");
-
-    return (
-        <li>
-            <Link to={`/graph/il/${userID}/${category.levelId}/${category.categoryId}?${subcategoryLinkString}`}>
-                {category.levelName} {category.categoryName}{subcategoryTextString && ` - ${subcategoryTextString}` }
-            </Link>
-        </li>
-    );
-};
-
-
-interface GameLinkSetProps {
-    game: Game;
-    userData: UserData;
-}
-const GameLinkSet: FC<GameLinkSetProps> = ({game, userData}: GameLinkSetProps) => {
-    return (
-        <>
-            <h1> {game.name} </h1>
-            {game.fullGameCategories.length > 0 ? <h2>Full game runs:</h2> : <></>}
-            <ul>
-                {game.fullGameCategories.map((category) => (
-                    <FullGameCategoryLink key={JSON.stringify(category)} category={category} userID={userData.id}/>
-                ))}
-            </ul>
-            {game.levelCategories.length > 0 ? <h2>IL runs:</h2> : <></>}
-            <ul>
-                {game.levelCategories.map((category) => (
-                    <LevelCategoryLink key={JSON.stringify(category)} category={category} userID={userData.id}/>
-                ))}
-            </ul>
-        </>
-    );
-};
+const subcategoryTextString = (subcategories: Subcategory[]): string => subcategories.length
+    ? " - "+subcategories.map((subcategory) => subcategory.subcategoryValueName).join(", ")
+    : "";
 
 const loadVariables = async (variables: SRCVariableSet): Promise<Subcategory[]> => {
     return await Promise.all(Object.entries(variables).map(async ([key, value]: [string, unknown]) => {
@@ -210,12 +148,32 @@ const UserPage: FC =  () => {
     if(error) return <ErrorAlert error={error} />;
     if(loading) return <LoadingAlert/>;
 
-
-    
     return (<>
-        <h2>Categories for {data?.name}</h2>
+        <h1>Categories for {data?.name}</h1>
         {data && data?.games?.length > 0 ? data?.games.map((game: Game) => (
-            <GameLinkSet game={game} userData={data} key={game.id} />
+            <React.Fragment key={game.id}>
+                <h2> {game.name} </h2>
+                {game.fullGameCategories.length > 0 ? <h3>Full game runs:</h3> : <></>}
+                <ul>
+                    {game.fullGameCategories.map((category) => (
+                        <li key={JSON.stringify(category)}>
+                            <Link to={`/graph/${data.id}/${category.categoryId}${subcategoryLinkString(category.subcategories)}`}>
+                                {category.categoryName}{subcategoryTextString(category.subcategories)}
+                            </Link>
+                        </li>                
+                    ))}         
+                </ul>
+                {game.levelCategories.length > 0 ? <h3>IL runs:</h3> : <></>}
+                <ul>
+                    {game.levelCategories.map((category) => (
+                        <li key={JSON.stringify(category)}>
+                            <Link to={`/graph/il/${data.id}/${category.levelId}/${category.categoryId}?${subcategoryLinkString(category.subcategories)}`}>
+                                {category.levelName} {category.categoryName}{subcategoryTextString(category.subcategories)}
+                            </Link>
+                        </li>     
+                    ))}
+                </ul>
+            </React.Fragment>
         )) : (<p>This user hasn&apos;t submitted any runs</p>)}
     </>);
 
