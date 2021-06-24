@@ -7,15 +7,12 @@ import { groupBy } from "lodash";
 import { SRCResult, SRCUser, SRCVariableSet, SRCPB_gcl } from "../types/SRCQueryResults";
 import useFetcher, { Fetcher } from "../utils/useFetcher";
 
-
 interface Game {
     name: string,
     id: string,
     fullGameCategories: Category[];
     levelCategories: LevelCategory[]
 }
-
-
 
 interface Category {
     gameName: string;
@@ -43,28 +40,20 @@ interface UserData {
     games: Game[];
 }
 
-const subcategoryLinkString = (subcategories: Subcategory[]): string => subcategories.length
-    ? "?" + subcategories.map((subcategory) => `${subcategory.subcategoryKeyId}=${subcategory.subcategoryValueId}`).join("&")
-    : "";
-
-const subcategoryTextString = (subcategories: Subcategory[]): string => subcategories.length
-    ? " - "+subcategories.map((subcategory) => subcategory.subcategoryValueName).join(", ")
-    : "";
-
-const loadVariables = async (variables: SRCVariableSet): Promise<Subcategory[]> => {
-    return await Promise.all(Object.entries(variables).map(async ([key, value]: [string, unknown]) => {
-        const variableDataRaw = await fetchp(`${SPEEDRUN_COM_URL}/variables/${key}`);
-        const variableData = await variableDataRaw.json();
-        
-        return {
-            subcategoryKeyId: key,
-            subcategoryValueId: value as string,
-            subcategoryValueName: variableData.data.values.values[value as string].label
-        };
-    }));
-};
-
 const fetcher: Fetcher<{id: string},UserData> = async ({id}) => {
+    const loadVariables = async (variables: SRCVariableSet): Promise<Subcategory[]> => {
+        return await Promise.all(Object.entries(variables).map(async ([key, value]: [string, unknown]) => {
+            const variableDataRaw = await fetchp(`${SPEEDRUN_COM_URL}/variables/${key}`);
+            const variableData = await variableDataRaw.json();
+            
+            return {
+                subcategoryKeyId: key,
+                subcategoryValueId: value as string,
+                subcategoryValueName: variableData.data.values.values[value as string].label
+            };
+        }));
+    };
+
     const [userApiDataRaw, pbDataRaw] = await Promise.all([
         fetchp(`${SPEEDRUN_COM_URL}/users/${id}`,{timeout: 30000}),
         fetchp(`${SPEEDRUN_COM_URL}/users/${id}/personal-bests?embed=game,category,level`,{timeout: 30000})
@@ -95,7 +84,6 @@ const fetcher: Fetcher<{id: string},UserData> = async ({id}) => {
         if(a.subcategories[0].subcategoryValueName > b.subcategories[0].subcategoryValueName) return 1;
         return 0;
     });
-
 
     const categoryDataILs: LevelCategory[] = (await Promise.all((pbDataIL.map(async pb => ({
         gameName: pb.game.data.names.international,
@@ -139,6 +127,14 @@ const fetcher: Fetcher<{id: string},UserData> = async ({id}) => {
         games: games
     };
 };
+
+const subcategoryLinkString = (subcategories: Subcategory[]): string => subcategories.length
+    ? "?" + subcategories.map((subcategory) => `${subcategory.subcategoryKeyId}=${subcategory.subcategoryValueId}`).join("&")
+    : "";
+
+const subcategoryTextString = (subcategories: Subcategory[]): string => subcategories.length
+    ? " - "+subcategories.map((subcategory) => subcategory.subcategoryValueName).join(", ")
+    : "";
 
 const UserPage: FC =  () => {
     const {id} = useParams<{id: string}>();
