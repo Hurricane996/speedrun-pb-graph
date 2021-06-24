@@ -1,10 +1,10 @@
 import fetchp from "fetch-jsonp";
 import React, { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 import {Link, useParams} from "react-router-dom";
-import { ErrorAlert, LoadingAlert } from "./Alerts";
-import { SPEEDRUN_COM_URL } from "./App";
+import { ErrorAlert, LoadingAlert } from "../componentrs/Alerts";
+import { SPEEDRUN_COM_URL } from "../App";
 import { groupBy } from "lodash";
-import { SRCResult, SRCUser, SRCVariableSet, SRCPB_gcl } from "./SRCQueryResults";
+import { SRCResult, SRCUser, SRCVariableSet, SRCPB_gcl } from "../types/SRCQueryResults";
 
 
 interface Game {
@@ -189,9 +189,7 @@ const getUserData = async (
             return 0;
         });
 
-
         const gameIds: string[] = [...new Set<string>(pbData.data.map(pb => pb.game.data.id))];
-
 
         const games: Game[] = gameIds.map(id => {
             const fullGameCategories = categoryDataFullGame.filter(category => category.gameId === id);
@@ -199,7 +197,6 @@ const getUserData = async (
 
             return {
                 id,
-                // this is kinda hacky but it saves a request. as for why we don't just put 
                 name: fullGameCategories.length > 0 ? fullGameCategories[0].gameName : levelCategories[0].gameName,
                 fullGameCategories,
                 levelCategories,
@@ -225,15 +222,16 @@ const getUserData = async (
 const UserPage: FC =  () => {
     const {id} = useParams<{id: string}>();
 
+    const [data, setData] = useState<UserData | null>(null);
+
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [isError, setIsError] = useState<boolean>(false);
     const [errorMessage, setErrorMessage] = useState<string>("");
 
-    const [userData, setUserData] = useState<UserData | null>(null);
 
    
 
-    useEffect(()=>{getUserData(id, setIsLoading, setIsError, setErrorMessage, setUserData);},[]);
+    useEffect(()=>{getUserData(id, setIsLoading, setIsError, setErrorMessage, setData);},[]);
 
     if(isError) return <ErrorAlert error={errorMessage} />;
     if(isLoading) return <LoadingAlert/>;
@@ -241,10 +239,10 @@ const UserPage: FC =  () => {
 
     
     return (<>
-        <h2>Categories for {userData?.name}</h2>
-        {userData?.games.map((game: Game) => (
-            <GameLinkSet game={game} userData={userData} key={game.id} />
-        ))}
+        <h2>Categories for {data?.name}</h2>
+        {data && data?.games?.length > 0 ? data?.games.map((game: Game) => (
+            <GameLinkSet game={game} userData={data} key={game.id} />
+        )) : (<p>This user hasn&apos;t submitted any runs</p>)}
     </>);
 
 };

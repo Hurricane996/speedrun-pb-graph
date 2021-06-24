@@ -2,6 +2,13 @@ export interface SRCResult<T> {
     data: T
 }
 
+export interface SRCPaginatedResult<T> extends SRCResult<T> {
+    data: T,
+    pagination: {
+        links: {rel: String, uri: String}[]
+    }
+}
+
 export interface SRCNameSet {
     international: string;
 }

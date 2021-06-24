@@ -1,17 +1,17 @@
 import React, { FC } from "react";
 
 import { HashRouter as Router, Route, Switch } from "react-router-dom";
-import GraphPage from "./GraphPage";
+import GraphPage from "./pages/GraphPage";
 
-import HomePage from "./HomePage";
-import UserPage from "./UserPage";
+import HomePage from "./pages/HomePage";
+import UserPage from "./pages/UserPage";
 
 import Container from "react-bootstrap/Container";
 import { Nav, Navbar } from "react-bootstrap";
 
 import "bootstrap/dist/css/bootstrap.min.css";
-import SearchPage from "./SearchPage";
-import SearchComponent from "./SearchComponent";
+import SearchPage from "./pages/SearchPage";
+import SearchComponent from "./componentrs/SearchComponent";
 import { Github } from "react-bootstrap-icons";
 
 
