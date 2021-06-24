@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 module.exports = {
     "env": {
         "browser": true,
@@ -25,6 +26,7 @@ module.exports = {
             "error",
             4
         ],
+        "@typescript-eslint/member-delimiter-style": "error",
         "linebreak-style": [
             "error",
             "unix"

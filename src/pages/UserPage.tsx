@@ -8,10 +8,10 @@ import { SRCResult, SRCUser, SRCVariableSet, SRCPB_gcl } from "../types/SRCQuery
 import useFetcher, { Fetcher } from "../utils/useFetcher";
 
 interface Game {
-    name: string,
-    id: string,
+    name: string;
+    id: string;
     fullGameCategories: Category[];
-    levelCategories: LevelCategory[]
+    levelCategories: LevelCategory[];
 }
 
 interface Category {
@@ -24,8 +24,8 @@ interface Category {
 }
 
 interface LevelCategory extends Category {
-    levelId: string,
-    levelName: string
+    levelId: string;
+    levelName: string;
 }
 
 interface Subcategory {

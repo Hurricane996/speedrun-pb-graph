@@ -14,12 +14,12 @@ interface Result {
 }
 
 interface Results {
-    exactMatch: Result | null,
-    results: Result[],
-    hasNext: boolean
+    exactMatch: Result | null;
+    results: Result[];
+    hasNext: boolean;
 }
 
-const fetcher: Fetcher <{query: string, offset: number}, Results> = async ({query, offset}) => {
+const fetcher: Fetcher <{query: string; offset: number}, Results> = async ({query, offset}) => {
     const [rawLookupData, rawSearchData] = await Promise.all([
         fetchp(`${SPEEDRUN_COM_URL}/users?lookup=${query}`, {timeout: 30000}),
         fetchp(`${SPEEDRUN_COM_URL}/users?name=${query}&offset=${offset}`, {timeout: 30000})

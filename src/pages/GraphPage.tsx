@@ -15,19 +15,19 @@ import useFetcher, { Fetcher } from "../utils/useFetcher";
 import insertIfExists from "../utils/insertIfExists";
 
 interface FetchedData {
-    gameName: string,
-    categoryName: string,
-    levelName: string,
-    subcategoryString: string,
-    username: string,
+    gameName: string;
+    categoryName: string;
+    levelName: string;
+    subcategoryString: string;
+    username: string;
     runs: {
         date: DateTime;
         time: number;
         id: string;
-    }[]
+    }[];
 }
 
-const fetcher: Fetcher<{userId: string|undefined, categoryId: string|undefined, levelId: string|undefined, searchParams: URLSearchParams},FetchedData> = async ({userId, categoryId, levelId, searchParams}) => {
+const fetcher: Fetcher<{userId: string|undefined; categoryId: string|undefined; levelId: string|undefined; searchParams: URLSearchParams},FetchedData> = async ({userId, categoryId, levelId, searchParams}) => {
     if(!userId) throw new Error("No user id provided!");
     if(!categoryId) throw new Error("No user id provided!");
     
@@ -89,7 +89,7 @@ const fetcher: Fetcher<{userId: string|undefined, categoryId: string|undefined, 
 const GraphPage: FC = () => 
 {
     // note level id will be null when isIL is false.
-    const {userId, categoryId, levelId} = useParams<{userId?: string, categoryId?: string, levelId?: string}>();
+    const {userId, categoryId, levelId} = useParams<{userId?: string; categoryId?: string; levelId?: string}>();
 
     const theChart = useRef<Chart.Chart| null>(null);
 
