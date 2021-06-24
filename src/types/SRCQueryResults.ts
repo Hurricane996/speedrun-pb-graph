@@ -1,12 +1,12 @@
 export interface SRCResult<T> {
-    data: T
+    data: T;
 }
 
 export interface SRCPaginatedResult<T> extends SRCResult<T> {
-    data: T,
+    data: T;
     pagination: {
-        links: {rel: String, uri: String}[]
-    }
+        links: {rel: string; uri: string}[];
+    };
 }
 
 export interface SRCNameSet {
@@ -27,13 +27,13 @@ export interface SRCCategory {
 }
 
 export interface EmbedGame {
-    game: SRCResult<SRCGame>
+    game: SRCResult<SRCGame>;
 }
 export interface EmbedLevel {
-    level: SRCResult<SRCLevel>
+    level: SRCResult<SRCLevel>;
 }
 export interface EmbedCategory {
-    category: SRCResult<SRCCategory>
+    category: SRCResult<SRCCategory>;
 }
 
 export interface SRCGame {
@@ -54,10 +54,10 @@ export interface SRCVariable{
     values : {
         values: {
             [key: string] : {
-                label: string
-            }
-        }
-    }
+                label: string;
+            };
+        };
+    };
 }
 
 export interface SRCRun {
@@ -65,11 +65,11 @@ export interface SRCRun {
     date: string;
     times: {
         primary_t: number;
-    }
+    };
     id: string;
     status: {
         status: string;
-    }
+    };
 
 }
 
