@@ -9,6 +9,7 @@ import { Link } from "react-router-dom";
 import { Jumbotron } from "react-bootstrap";
 import { ErrorAlert, LoadingAlert } from "./Alerts";
 import { SRCCategory_g, SRCLevel, SRCResult, SRCRun, SRCUser, SRCVariable } from "./SRCQueryResults";
+import Chart from "chart.js";
 
 interface Run {
     date: DateTime;
@@ -43,7 +44,7 @@ const GraphPage: FC<GraphPageProps> = ({isIL} : GraphPageProps) =>
     // note level id will be null when isIL is false.
     const {userId, categoryId, levelId} = useParams<{userId?: string, categoryId?: string, levelId?: string}>();
 
-    const theChart = useRef<typeof Line>(null);
+    const theChart = useRef<Chart.Chart| null>(null);
 
     const search = new URLSearchParams(useLocation().search);
 
@@ -144,14 +145,16 @@ const GraphPage: FC<GraphPageProps> = ({isIL} : GraphPageProps) =>
     };
 
     const onChartClick = () => {
-        const activeEl = (theChart.current as any).getActiveElements();
-        if(activeEl.length > 0) {
-            const run = runs[activeEl[0].index];
+        // somehow the user clicked on the chart before the ref was set... shouldn't be possible
+        if(!theChart.current) return;
+        const activeElements = theChart.current.getActiveElements();
+        if(activeElements.length > 0) {
+            const run = runs[activeElements[0].index];
             window.location.href = `https://speedrun.com/run/${run.id}`;
         }
     };
 
-    const chartOptions = {
+    const chartOptions: Chart.ChartOptions = {
         onClick: onChartClick,
         responsive: true,
         scales: {
@@ -163,14 +166,15 @@ const GraphPage: FC<GraphPageProps> = ({isIL} : GraphPageProps) =>
             },
             y: {
                 ticks: {
-                    callback: (value: number) => makeHumanReadable(value)
+                    // if this isn't a number we're *really* fucked
+                    callback: (value: number| string) => makeHumanReadable(value as number)
                 }
             }
         },
         plugins: {
             tooltip: {
                 callbacks: {
-                    label: (context: any) => makeHumanReadable(context.parsed.y)
+                    label: (tooltipItem: Chart.TooltipItem<"line">) => makeHumanReadable(tooltipItem.parsed.y)
                 }
             }
         }

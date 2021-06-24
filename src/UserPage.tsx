@@ -148,8 +148,8 @@ const getUserData = async (
 
         const pbDataGrouped  = groupBy(pbData.data, pb => pb.category.data.type);
 
-        const pbDataFullGame = pbDataGrouped["per-game"];
-        const pbDataIL = pbDataGrouped["per-level"];
+        const pbDataFullGame = pbDataGrouped["per-game"] ?? [];
+        const pbDataIL = pbDataGrouped["per-level"] ?? [];
         
         const categoryDataFullGame: Category[] = (await Promise.all(pbDataFullGame.map(async pb => ({
             gameName: pb.game.data.names.international,
@@ -166,6 +166,7 @@ const getUserData = async (
             if(a.subcategories[0].subcategoryValueName > b.subcategories[0].subcategoryValueName) return 1;
             return 0;
         });
+
 
         const categoryDataILs: LevelCategory[] = (await Promise.all((pbDataIL.map(async pb => ({
             gameName: pb.game.data.names.international,
@@ -189,17 +190,21 @@ const getUserData = async (
         });
 
 
-        const games: Game[] = [...new Set<Game>(pbData.data.map(pb => ({
-            id: pb.game.data.id,
-            name: pb.game.data.names.international,
-            fullGameCategories: [],
-            levelCategories: []
-        })))].map(({id, name}) => ({
-            id,
-            name,
-            fullGameCategories: categoryDataFullGame.filter(category => category.gameId === id),
-            levelCategories: categoryDataILs.filter(category => category.gameId === id)
-        }));
+        const gameIds: string[] = [...new Set<string>(pbData.data.map(pb => pb.game.data.id))];
+
+
+        const games: Game[] = gameIds.map(id => {
+            const fullGameCategories = categoryDataFullGame.filter(category => category.gameId === id);
+            const levelCategories = categoryDataILs.filter(category => category.gameId === id);
+
+            return {
+                id,
+                // this is kinda hacky but it saves a request. as for why we don't just put 
+                name: fullGameCategories.length > 0 ? fullGameCategories[0].gameName : levelCategories[0].gameName,
+                fullGameCategories,
+                levelCategories,
+            };
+        });
 
 
         setUserData({
