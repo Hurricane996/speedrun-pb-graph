@@ -2,7 +2,7 @@ import fetchp from "fetch-jsonp";
 import React, { useEffect, useState, FC, Dispatch, SetStateAction } from "react";
 import { useLocation, useParams } from "react-router";
 import { Link } from "react-router-dom";
-import { ErrorAlert, LoadingAlert } from "../componentrs/Alerts";
+import { ErrorAlert, LoadingAlert } from "../components/Alerts";
 import {SPEEDRUN_COM_URL} from "../App";
 import { SRCPaginatedResult, SRCResult, SRCUser } from "../types/SRCQueryResults";
 

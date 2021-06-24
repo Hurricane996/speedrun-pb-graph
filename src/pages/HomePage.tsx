@@ -1,6 +1,6 @@
 import React, {  FC  } from "react";
 
-import SearchComponent from "../componentrs/SearchComponent";
+import SearchComponent from "../components/SearchComponent";
 
 const HomePage: FC = () => {
 

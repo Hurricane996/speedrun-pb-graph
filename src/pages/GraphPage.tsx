@@ -7,7 +7,7 @@ import "chartjs-adapter-luxon";
 import { DateTime } from "luxon";
 import { Link } from "react-router-dom";
 import { Jumbotron } from "react-bootstrap";
-import { ErrorAlert, LoadingAlert } from "../componentrs/Alerts";
+import { ErrorAlert, LoadingAlert } from "../components/Alerts";
 import { SRCCategory_g, SRCLevel, SRCResult, SRCRun, SRCUser, SRCVariable } from "../types/SRCQueryResults";
 import Chart from "chart.js";
 import { makeHumanReadable } from "../utils/makeHumanReadable";

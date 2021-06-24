@@ -1,7 +1,7 @@
 import fetchp from "fetch-jsonp";
 import React, { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 import {Link, useParams} from "react-router-dom";
-import { ErrorAlert, LoadingAlert } from "../componentrs/Alerts";
+import { ErrorAlert, LoadingAlert } from "../components/Alerts";
 import { SPEEDRUN_COM_URL } from "../App";
 import { groupBy } from "lodash";
 import { SRCResult, SRCUser, SRCVariableSet, SRCPB_gcl } from "../types/SRCQueryResults";
