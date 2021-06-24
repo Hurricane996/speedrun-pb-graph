@@ -25,5 +25,9 @@ jobs:
 
       # Runs a single command using the runners shell
       
-      - name: Build
-        run: yarn && yarn eslint src/* && yarn build
+      - name: install
+        run: yarn 
+      - name: lint
+        run: yarn eslint src/* \
+      - name: build
+        run: yarn build
