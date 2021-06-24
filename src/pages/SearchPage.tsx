@@ -1,101 +1,57 @@
 import fetchp from "fetch-jsonp";
-import React, { useEffect, useState, FC, Dispatch, SetStateAction } from "react";
+import React, { FC } from "react";
 import { useLocation, useParams } from "react-router";
 import { Link } from "react-router-dom";
 import { ErrorAlert, LoadingAlert } from "../components/Alerts";
 import {SPEEDRUN_COM_URL} from "../App";
 import { SRCPaginatedResult, SRCResult, SRCUser } from "../types/SRCQueryResults";
 
+import useFetcher, {Fetcher} from "../utils/useFetcher";
+
 interface Result {
     id: string;
     name: string;
 }
 
-interface GetInfoData {
+interface Results {
     exactMatch: Result | null,
     results: Result[],
     hasNext: boolean
 }
 
-const getInfo = async (
-    query: string,
-    offset: number,
+const fetcher: Fetcher <{query: string, offset: number}, Results> = async ({query, offset}) => {
+    const [rawLookupData, rawSearchData] = await Promise.all([
+        fetchp(`${SPEEDRUN_COM_URL}/users?lookup=${query}`, {timeout: 30000}),
+        fetchp(`${SPEEDRUN_COM_URL}/users?name=${query}&offset=${offset}`, {timeout: 30000})
+    ]);
+    const [lookupData, searchData] = await Promise.all([
+        rawLookupData.json<SRCResult<SRCUser[]>>(),
+        rawSearchData.json<SRCPaginatedResult<SRCUser[]>>()
+    ]);
 
-    setData: Dispatch<SetStateAction<GetInfoData|null>>,
-    setIsLoading: Dispatch<SetStateAction<boolean>>,
-    setIsError: Dispatch<SetStateAction<boolean>>,
-    setErrorMessage: Dispatch<SetStateAction<string>>,
-
-) => {
-
-
-    setIsLoading(true);
-
-    const outData: GetInfoData = {
-        exactMatch: null,
-        results: [],
-        hasNext: false
+    return {
+        exactMatch: lookupData.data.length > 0 ? {
+            id: lookupData.data[0].id,
+            name: lookupData.data[0].names.international
+        } : null,
+        results: searchData.data.map(user => ({id: user.id, name: user.names.international})),
+        hasNext: searchData.pagination.links.find(link => link.rel == "next") !== undefined
     };
-
-    try {  
-        const rawLookupData = await fetchp(`${SPEEDRUN_COM_URL}/users?lookup=${query}`, {timeout: 30000});
-        const lookupData = await rawLookupData.json<SRCResult<SRCUser[]>>();
-
-        if(lookupData.data.length > 0) {
-            outData.exactMatch = {
-                id: lookupData.data[0].id,
-                name: lookupData.data[0].names.international
-            };
-        }
-
-
-
-        const rawData = await fetchp(`${SPEEDRUN_COM_URL}/users?name=${query}&offset=${offset}`, {timeout: 30000});
-        const data = await rawData.json<SRCPaginatedResult<SRCUser[]>>();
-
-        outData.results = data.data.map(
-            ({id, names}) => ({
-                id, 
-                name: names.international
-            }) 
-        );
-
-        outData.hasNext = data.pagination.links.find(link => link.rel == "next") !== undefined;
-
-
-        setData(outData);
-        setIsLoading(false);
-
-    } catch(error)  {
-        console.error(error);
-        setIsError(true);
-        setErrorMessage(`Error ${error.message} occurred`);
-    }
 };
 
 
 const SearchPage: FC = () => {
-    const [data, setData] = useState<GetInfoData|null>(null);
-    const [isLoading, setIsLoading] = useState<boolean>(true);
-    const [isError, setIsError] = useState<boolean>(false);
-    const [errorMessage, setErrorMessage] = useState<string>("");
-
     const {query } = useParams<{query: string}>();
-
-    const location = useLocation();
-
-    const searchParams = new URLSearchParams(location.search);
+    const searchParams = new URLSearchParams(useLocation().search);
 
 
     const strOffset = searchParams.get("offset");
     const offset = strOffset ? parseInt(strOffset) : 0;
 
+    const [data, loading, error] = useFetcher(fetcher, {query, offset},[query,offset]);
 
-    
-    useEffect(() => {getInfo(query,offset,setData,setIsLoading,setIsError,setErrorMessage,);} , [query, location]);
-
-    if(isError) return <ErrorAlert error={errorMessage} />;
-    if(isLoading) return <LoadingAlert/>;
+    if(error) return <ErrorAlert error={error} />;
+    if(loading) return <LoadingAlert/>;
 
     return (
         <>

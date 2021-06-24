@@ -11,7 +11,7 @@ import { Nav, Navbar } from "react-bootstrap";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import SearchPage from "./pages/SearchPage";
-import SearchComponent from "./componentrs/SearchComponent";
+import SearchComponent from "./components/SearchComponent";
 import { Github } from "react-bootstrap-icons";
 
 
@@ -37,10 +37,10 @@ const App : FC = ()  => {
                         <UserPage />
                     </Route>
                     <Route path="/graph/il/:userId/:levelId/:categoryId" exact>
-                        <GraphPage isIL={true}/>
+                        <GraphPage/>
                     </Route>
                     <Route path="/graph/:userId/:categoryId" exact>
-                        <GraphPage isIL={false}/>
+                        <GraphPage/>
                     </Route>
                     <Route path="/search/:query" exact>
                         <SearchPage />
