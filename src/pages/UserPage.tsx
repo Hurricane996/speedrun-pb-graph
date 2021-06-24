@@ -120,7 +120,6 @@ const fetcher: Fetcher<{id: string},UserData> = async ({id}) => {
         };
     });
 
-
     return {
         id: userApiData.data.id,
         name: userApiData.data.names.international,
@@ -172,7 +171,6 @@ const UserPage: FC =  () => {
             </React.Fragment>
         )) : (<p>This user hasn&apos;t submitted any runs</p>)}
     </>);
-
 };
 
 export default UserPage;
