@@ -1,4 +1,3 @@
-import fetchp from "fetch-jsonp";
 import React, { FC } from "react";
 import { useLocation, useParams } from "react-router";
 import { Link } from "react-router-dom";
@@ -7,6 +6,7 @@ import {SPEEDRUN_COM_URL} from "../App";
 import { SRCPaginatedResult, SRCResult, SRCUser } from "../types/SRCQueryResults";
 
 import useFetcher, {Fetcher} from "../utils/useFetcher";
+import fetchWrapper from "../utils/fetchWrapper";
 
 interface Result {
     id: string;
@@ -20,13 +20,9 @@ interface Results {
 }
 
 const fetcher: Fetcher <{query: string; offset: number}, Results> = async ({query, offset}) => {
-    const [rawLookupData, rawSearchData] = await Promise.all([
-        fetchp(`${SPEEDRUN_COM_URL}/users?lookup=${query}`, {timeout: 30000}),
-        fetchp(`${SPEEDRUN_COM_URL}/users?name=${query}&offset=${offset}`, {timeout: 30000})
-    ]);
     const [lookupData, searchData] = await Promise.all([
-        rawLookupData.json<SRCResult<SRCUser[]>>(),
-        rawSearchData.json<SRCPaginatedResult<SRCUser[]>>()
+        fetchWrapper<SRCResult<SRCUser[]>>(`${SPEEDRUN_COM_URL}/users?lookup=${query}`, {timeout: 30000}),
+        fetchWrapper<SRCPaginatedResult<SRCUser[]>>(`${SPEEDRUN_COM_URL}/users?name=${query}&offset=${offset}`, {timeout: 30000})
     ]);
 
     return {

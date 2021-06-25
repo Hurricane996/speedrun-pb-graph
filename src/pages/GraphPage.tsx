@@ -1,4 +1,3 @@
-import fetchp from "fetch-jsonp";
 import React, { FC, useRef } from "react";
 import { useLocation, useParams } from "react-router";
 import { SPEEDRUN_COM_URL } from "../App";
@@ -13,6 +12,7 @@ import Chart from "chart.js";
 import makeTimeHumanReadable from "../utils/makeTimeHumanReadable";
 import useFetcher, { Fetcher } from "../utils/useFetcher";
 import insertIfExists from "../utils/insertIfExists";
+import fetchWrapper from "../utils/fetchWrapper";
 
 interface FetchedData {
     gameName: string;
@@ -37,32 +37,20 @@ interface FetcherInput {
 const fetcher: Fetcher<FetcherInput,FetchedData> = async ({userId, categoryId, levelId, searchParams}) => {
     if(!userId) throw new Error("No user id provided!");
     if(!categoryId) throw new Error("No user id provided!");
+
+    const [categoryData, userData, runsData, levelData, subcategoryArr] = await Promise.all([
+        fetchWrapper<SRCResult<SRCCategory_g>>(`${SPEEDRUN_COM_URL}/categories/${categoryId}?embed=game`,{timeout: 30000}),
+        fetchWrapper<SRCResult<SRCUser>>(`${SPEEDRUN_COM_URL}/users/${userId}`,{timeout: 30000}),
+        fetchWrapper<SRCResult<SRCRun[]>>(`${SPEEDRUN_COM_URL}/runs?user=${userId}${insertIfExists(levelId, "&level=", true)}&category=${categoryId}&max=200`,{timeout: 30000}),
+        levelId ? fetchWrapper<SRCResult<SRCLevel>>(`${SPEEDRUN_COM_URL}/levels/${levelId}`, {timeout: 30000}) : Promise.resolve<null>(null),
+
+        // load all of the subcategories
+        Promise.all([...searchParams.entries()].map(async ([key,value]: [string,string]) : Promise<string> => {
+            const data = await fetchWrapper<SRCResult<SRCVariable>>(`${SPEEDRUN_COM_URL}/variables/${key}`, {timeout: 30000});
     
-    const [categoryDataRaw, userDataRaw, runsDataRaw] = await Promise.all([
-        fetchp(`${SPEEDRUN_COM_URL}/categories/${categoryId}?embed=game`,{timeout: 30000}),
-        fetchp(`${SPEEDRUN_COM_URL}/users/${userId}`,{timeout: 30000}),
-        fetchp(`${SPEEDRUN_COM_URL}/runs?user=${userId}${insertIfExists(levelId, "&level=", true)}&category=${categoryId}&max=200`,{timeout: 30000})
+            return data.data.values.values[value as string].label;
+        }))
     ]);
-    const [categoryData, userData, runsData] = await Promise.all([
-        categoryDataRaw.json<SRCResult<SRCCategory_g>>(),
-        userDataRaw.json<SRCResult<SRCUser>>(),
-        runsDataRaw.json<SRCResult<SRCRun[]>>(),
-    ]);
-
-    const subcategoryString = (await Promise.all([...searchParams.entries()].map(async ([key,value]: [string,string]) : Promise<string> => {
-        const dataRaw = await fetchp(`${SPEEDRUN_COM_URL}/variables/${key}`);
-        const data = await dataRaw.json<SRCResult<SRCVariable>>();
-
-        return data.data.values.values[value as string].label;
-    }))).join(", ");
-
-    let levelName = "";
-    if(levelId) {
-        const levelDataRaw = await fetchp(`${SPEEDRUN_COM_URL}/levels/${levelId}`);
-        const levelData = await levelDataRaw.json<SRCResult<SRCLevel>>();
-        
-        levelName = levelData.data.name;
-    }
     
     const runs = runsData.data
         .filter(run=> run.status.status !== "rejected")
@@ -83,9 +71,9 @@ const fetcher: Fetcher<FetcherInput,FetchedData> = async ({userId, categoryId, l
     return {
         gameName: categoryData.data.game.data.names.international,
         categoryName: categoryData.data.name,
-        subcategoryString,
+        subcategoryString: subcategoryArr.join(", "),
         username: userData.data.names.international,
-        levelName, 
+        levelName: levelData ? levelData.data.name : "", 
         runs
     };
 };
