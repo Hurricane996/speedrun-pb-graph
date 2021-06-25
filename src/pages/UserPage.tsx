@@ -61,7 +61,7 @@ const fetcher: Fetcher<{id: string},UserData> = async ({id}) => {
 
     const pbDataFullGame = pbDataGrouped["per-game"] ?? [];
     const pbDataIL = pbDataGrouped["per-level"] ?? [];
-    
+
     const categoryDataFullGame: Category[] = (await Promise.all(pbDataFullGame.map(async pb => ({
         gameName: pb.game.data.names.international,
         gameId:  pb.game.data.id,
@@ -69,14 +69,7 @@ const fetcher: Fetcher<{id: string},UserData> = async ({id}) => {
         categoryId: pb.category.data.id,
 
         subcategories: await loadVariables(pb.run.values)
-    })))).sort((a: Category, b: Category) => {
-        if(a.categoryName < b.categoryName) return -1;
-        if(a.categoryName > b.categoryName) return 1;
-        if(a.subcategories.length == 0) return 0;
-        if(a.subcategories[0].subcategoryValueName < b.subcategories[0].subcategoryValueName) return -1;
-        if(a.subcategories[0].subcategoryValueName > b.subcategories[0].subcategoryValueName) return 1;
-        return 0;
-    });
+    }))));
 
     const categoryDataILs: LevelCategory[] = (await Promise.all((pbDataIL.map(async pb => ({
         gameName: pb.game.data.names.international,
@@ -87,23 +80,36 @@ const fetcher: Fetcher<{id: string},UserData> = async ({id}) => {
         levelName: pb.level.data.name,
 
         subcategories: await loadVariables(pb.run.values)        
-    }))))).sort((a: LevelCategory, b: LevelCategory) => {
-        if(a.levelName < b.levelName) return -1;
-        if(a.levelName > b.levelName) return 1;
-        if(a.categoryName < b.categoryName) return -1;
-        if(a.categoryName > b.categoryName) return 1;
-        if(a.subcategories.length == 0) return 0;
-        if(a.subcategories[0].subcategoryValueName < b.subcategories[0].subcategoryValueName) return -1;
-        if(a.subcategories[0].subcategoryValueName > b.subcategories[0].subcategoryValueName) return 1;
-
-        return 0;
-    });
+    })))));
 
     const gameIds: string[] = [...new Set<string>(pbData.data.map(pb => pb.game.data.id))];
 
     const games: Game[] = gameIds.map(id => {
-        const fullGameCategories = categoryDataFullGame.filter(category => category.gameId === id);
-        const levelCategories = categoryDataILs.filter(category => category.gameId === id);
+        const fullGameCategories = categoryDataFullGame
+            .filter(category => category.gameId === id)
+            .sort((a: Category, b: Category) => {
+                if(a.categoryName < b.categoryName) return -1;
+                if(a.categoryName > b.categoryName) return 1;
+                if(a.subcategories.length === 0 || b.subcategories.length === 0) return 0;
+                if(a.subcategories[0].subcategoryValueName < b.subcategories[0].subcategoryValueName) return -1;
+                if(a.subcategories[0].subcategoryValueName > b.subcategories[0].subcategoryValueName) return 1;
+                return 0;
+            });
+
+
+        const levelCategories = categoryDataILs
+            .filter(category => category.gameId === id)
+            .sort((a: LevelCategory, b: LevelCategory) => {
+                if(a.levelName < b.levelName) return -1;
+                if(a.levelName > b.levelName) return 1;
+                if(a.categoryName < b.categoryName) return -1;
+                if(a.categoryName > b.categoryName) return 1;
+                if(a.subcategories.length === 0 || b.subcategories.length === 0) return 0;
+                if(a.subcategories[0].subcategoryValueName < b.subcategories[0].subcategoryValueName) return -1;
+                if(a.subcategories[0].subcategoryValueName > b.subcategories[0].subcategoryValueName) return 1;
+
+                return 0;
+            });
 
         return {
             id,
