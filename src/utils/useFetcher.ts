@@ -9,7 +9,6 @@ const useFetcher = <InType,OutType>(fetcher: Fetcher<InType, OutType>, input: In
 
     useEffect(() => {(async () => {
         setLoading(true);
-
         try {
             const newData = await fetcher(input);
             setData(newData);
@@ -22,7 +21,6 @@ const useFetcher = <InType,OutType>(fetcher: Fetcher<InType, OutType>, input: In
     })();},forceReload ?? []);
 
     return [data, loading, error];
-    
 };
 
 export default useFetcher;

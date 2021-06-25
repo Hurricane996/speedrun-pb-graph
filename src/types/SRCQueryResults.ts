@@ -70,7 +70,6 @@ export interface SRCRun {
     status: {
         status: string;
     };
-
 }
 
 export interface SRCPB {

@@ -3,8 +3,6 @@ import React, {  FC  } from "react";
 import SearchComponent from "../components/SearchComponent";
 
 const HomePage: FC = () => {
-
-
     return (
         <>
             <h1> Welcome to the Speedrun PB Grapher</h1>

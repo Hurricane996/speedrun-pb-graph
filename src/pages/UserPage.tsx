@@ -19,7 +19,6 @@ interface Category {
     gameId: string;
     categoryName: string;
     categoryId: string;
-
     subcategories: Subcategory[];
 }
 
@@ -143,34 +142,36 @@ const UserPage: FC =  () => {
     if(error) return <ErrorAlert error={error} />;
     if(loading) return <LoadingAlert/>;
 
-    return (<>
-        <h1>Categories for {data?.name}</h1>
-        {data && data?.games?.length > 0 ? data?.games.map((game: Game) => (
-            <React.Fragment key={game.id}>
-                <h2> {game.name} </h2>
-                {game.fullGameCategories.length > 0 ? <h3>Full game runs:</h3> : <></>}
-                <ul>
-                    {game.fullGameCategories.map((category) => (
-                        <li key={JSON.stringify(category)}>
-                            <Link to={`/graph/${data.id}/${category.categoryId}${subcategoryLinkString(category.subcategories)}`}>
-                                {category.categoryName}{subcategoryTextString(category.subcategories)}
-                            </Link>
-                        </li>                
-                    ))}         
-                </ul>
-                {game.levelCategories.length > 0 ? <h3>IL runs:</h3> : <></>}
-                <ul>
-                    {game.levelCategories.map((category) => (
-                        <li key={JSON.stringify(category)}>
-                            <Link to={`/graph/il/${data.id}/${category.levelId}/${category.categoryId}?${subcategoryLinkString(category.subcategories)}`}>
-                                {category.levelName} {category.categoryName}{subcategoryTextString(category.subcategories)}
-                            </Link>
-                        </li>     
-                    ))}
-                </ul>
-            </React.Fragment>
-        )) : (<p>This user hasn&apos;t submitted any runs</p>)}
-    </>);
+    return (
+        <>
+            <h1>Categories for {data?.name}</h1>
+            {data && data?.games?.length > 0 ? data?.games.map((game: Game) => (
+                <React.Fragment key={game.id}>
+                    <h2> {game.name} </h2>
+                    {game.fullGameCategories.length > 0 ? <h3>Full game runs:</h3> : <></>}
+                    <ul>
+                        {game.fullGameCategories.map((category) => (
+                            <li key={JSON.stringify(category)}>
+                                <Link to={`/graph/${data.id}/${category.categoryId}${subcategoryLinkString(category.subcategories)}`}>
+                                    {category.categoryName}{subcategoryTextString(category.subcategories)}
+                                </Link>
+                            </li>                
+                        ))}         
+                    </ul>
+                    {game.levelCategories.length > 0 ? <h3>IL runs:</h3> : <></>}
+                    <ul>
+                        {game.levelCategories.map((category) => (
+                            <li key={JSON.stringify(category)}>
+                                <Link to={`/graph/il/${data.id}/${category.levelId}/${category.categoryId}?${subcategoryLinkString(category.subcategories)}`}>
+                                    {category.levelName} {category.categoryName}{subcategoryTextString(category.subcategories)}
+                                </Link>
+                            </li>     
+                        ))}
+                    </ul>
+                </React.Fragment>
+            )) : (<p>This user hasn&apos;t submitted any runs</p>)}
+        </>
+    );
 };
 
 export default UserPage;

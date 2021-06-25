@@ -27,7 +27,14 @@ interface FetchedData {
     }[];
 }
 
-const fetcher: Fetcher<{userId: string|undefined; categoryId: string|undefined; levelId: string|undefined; searchParams: URLSearchParams},FetchedData> = async ({userId, categoryId, levelId, searchParams}) => {
+interface FetcherInput {
+    userId: string|undefined;
+    categoryId: string|undefined;
+    levelId: string|undefined;
+    searchParams: URLSearchParams;
+}
+
+const fetcher: Fetcher<FetcherInput,FetchedData> = async ({userId, categoryId, levelId, searchParams}) => {
     if(!userId) throw new Error("No user id provided!");
     if(!categoryId) throw new Error("No user id provided!");
     
@@ -36,8 +43,6 @@ const fetcher: Fetcher<{userId: string|undefined; categoryId: string|undefined; 
         fetchp(`${SPEEDRUN_COM_URL}/users/${userId}`,{timeout: 30000}),
         fetchp(`${SPEEDRUN_COM_URL}/runs?user=${userId}${insertIfExists(levelId, "&level=", true)}&category=${categoryId}&max=200`,{timeout: 30000})
     ]);
-
-
     const [categoryData, userData, runsData] = await Promise.all([
         categoryDataRaw.json<SRCResult<SRCCategory_g>>(),
         userDataRaw.json<SRCResult<SRCUser>>(),
@@ -52,11 +57,10 @@ const fetcher: Fetcher<{userId: string|undefined; categoryId: string|undefined; 
     }))).join(", ");
 
     let levelName = "";
-
     if(levelId) {
         const levelDataRaw = await fetchp(`${SPEEDRUN_COM_URL}/levels/${levelId}`);
         const levelData = await levelDataRaw.json<SRCResult<SRCLevel>>();
-
+        
         levelName = levelData.data.name;
     }
     
@@ -86,9 +90,7 @@ const fetcher: Fetcher<{userId: string|undefined; categoryId: string|undefined; 
     };
 };
 
-const GraphPage: FC = () => 
-{
-    // note level id will be null when isIL is false.
+const GraphPage: FC = () => {
     const {userId, categoryId, levelId} = useParams<{userId?: string; categoryId?: string; levelId?: string}>();
 
     const theChart = useRef<Chart.Chart| null>(null);
@@ -144,14 +146,9 @@ const GraphPage: FC = () =>
         }
     };
 
-    if(!data) return (<ErrorAlert error="There is no data but no error was thrown. Something is really fucked."></ErrorAlert>);
-
-
-
-
     return (
         <>
-            <h1>{data.gameName}: {insertIfExists(data.levelName," ")}{data.categoryName} - {insertIfExists(data.subcategoryString, " - ")}{data.username}</h1>
+            <h1>{data?.gameName}: {insertIfExists(data?.levelName," ")}{data?.categoryName} - {insertIfExists(data?.subcategoryString, " - ")}{data?.username}</h1>
             <Link to={`/user/${userId}`} >Back to user</Link>
             <p><b> Click a data-point to see the associated run&apos;s speedrun.com page!</b></p>
             <Jumbotron>
@@ -160,4 +157,5 @@ const GraphPage: FC = () =>
         </>
     );
 };
+
 export default GraphPage;
