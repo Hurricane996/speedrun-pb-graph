@@ -13,6 +13,7 @@ import Chart from "chart.js";
 import makeTimeHumanReadable from "../utils/makeTimeHumanReadable";
 import useFetcher, { Fetcher } from "../utils/useFetcher";
 import insertIfExists from "../utils/insertIfExists";
+import fetchWrapper from "../utils/fetchWrapper";
 
 interface FetchedData {
     gameName: string;
@@ -38,15 +39,10 @@ const fetcher: Fetcher<FetcherInput,FetchedData> = async ({userId, categoryId, l
     if(!userId) throw new Error("No user id provided!");
     if(!categoryId) throw new Error("No user id provided!");
     
-    const [categoryDataRaw, userDataRaw, runsDataRaw] = await Promise.all([
-        fetchp(`${SPEEDRUN_COM_URL}/categories/${categoryId}?embed=game`,{timeout: 30000}),
-        fetchp(`${SPEEDRUN_COM_URL}/users/${userId}`,{timeout: 30000}),
-        fetchp(`${SPEEDRUN_COM_URL}/runs?user=${userId}${insertIfExists(levelId, "&level=", true)}&category=${categoryId}&max=200`,{timeout: 30000})
-    ]);
     const [categoryData, userData, runsData] = await Promise.all([
-        categoryDataRaw.json<SRCResult<SRCCategory_g>>(),
-        userDataRaw.json<SRCResult<SRCUser>>(),
-        runsDataRaw.json<SRCResult<SRCRun[]>>(),
+        fetchWrapper<SRCResult<SRCCategory_g>>(`${SPEEDRUN_COM_URL}/categories/${categoryId}?embed=game`,{timeout: 30000}),
+        fetchWrapper<SRCResult<SRCUser>>(`${SPEEDRUN_COM_URL}/users/${userId}`,{timeout: 30000}),
+        fetchWrapper<SRCResult<SRCRun[]>>(`${SPEEDRUN_COM_URL}/runs?user=${userId}${insertIfExists(levelId, "&level=", true)}&category=${categoryId}&max=200`,{timeout: 30000})
     ]);
 
     const subcategoryString = (await Promise.all([...searchParams.entries()].map(async ([key,value]: [string,string]) : Promise<string> => {

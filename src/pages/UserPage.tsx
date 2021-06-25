@@ -1,11 +1,11 @@
-import fetchp from "fetch-jsonp";
 import React, {  FC } from "react";
 import {Link, useParams} from "react-router-dom";
 import { ErrorAlert, LoadingAlert } from "../components/Alerts";
 import { SPEEDRUN_COM_URL } from "../App";
 import { groupBy } from "lodash";
-import { SRCResult, SRCUser, SRCVariableSet, SRCPB_gcl } from "../types/SRCQueryResults";
+import { SRCResult, SRCUser, SRCVariableSet, SRCPB_gcl, SRCVariable } from "../types/SRCQueryResults";
 import useFetcher, { Fetcher } from "../utils/useFetcher";
+import fetchWrapper from "../utils/fetchWrapper";
 
 interface Game {
     name: string;
@@ -42,8 +42,7 @@ interface UserData {
 const fetcher: Fetcher<{id: string},UserData> = async ({id}) => {
     const loadVariables = async (variables: SRCVariableSet): Promise<Subcategory[]> => {
         return await Promise.all(Object.entries(variables).map(async ([key, value]: [string, unknown]) => {
-            const variableDataRaw = await fetchp(`${SPEEDRUN_COM_URL}/variables/${key}`);
-            const variableData = await variableDataRaw.json();
+            const variableData = await fetchWrapper<SRCResult<SRCVariable>>(`${SPEEDRUN_COM_URL}/variables/${key}`,{timeout:3000});
             
             return {
                 subcategoryKeyId: key,
@@ -53,14 +52,9 @@ const fetcher: Fetcher<{id: string},UserData> = async ({id}) => {
         }));
     };
 
-    const [userApiDataRaw, pbDataRaw] = await Promise.all([
-        fetchp(`${SPEEDRUN_COM_URL}/users/${id}`,{timeout: 30000}),
-        fetchp(`${SPEEDRUN_COM_URL}/users/${id}/personal-bests?embed=game,category,level`,{timeout: 30000})
-    ]);
-
     const [userApiData, pbData] = await Promise.all([
-        userApiDataRaw.json<SRCResult<SRCUser>>(),
-        pbDataRaw.json<SRCResult<SRCPB_gcl[]>>()
+        fetchWrapper<SRCResult<SRCUser>>(`${SPEEDRUN_COM_URL}/users/${id}`,{timeout: 30000}),
+        fetchWrapper<SRCResult<SRCPB_gcl[]>>(`${SPEEDRUN_COM_URL}/users/${id}/personal-bests?embed=game,category,level`,{timeout: 30000})
     ]);
 
     const pbDataGrouped  = groupBy(pbData.data, pb => pb.category.data.type);
