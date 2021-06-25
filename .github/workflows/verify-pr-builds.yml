@@ -14,7 +14,7 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
-  build:
+  verify-pr:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
@@ -30,13 +30,3 @@ jobs:
         run: yarn eslint src/* \
       - name: build
         run: yarn build
-        
-      - name: GitHub Checks
-        uses: LouisBrunner/checks-action@v1.1.2
-        if: always()
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          name: Verify PR
-          conclusion: ${{ job.status }}
-          output: |
-            {"summary":"job summary not yet supported"}
