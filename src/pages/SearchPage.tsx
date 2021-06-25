@@ -67,7 +67,6 @@ const SearchPage: FC = () => {
             {data?.hasNext && (<Link to={`/search/${query}?offset=${offset + 20}`}>Next &gt;</Link>)}
         </>
     );
-
 };
 
 export default SearchPage;

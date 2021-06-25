@@ -1,14 +1,10 @@
 import React, { FC } from "react";
-
 import { HashRouter as Router, Route, Switch } from "react-router-dom";
 import GraphPage from "./pages/GraphPage";
-
 import HomePage from "./pages/HomePage";
 import UserPage from "./pages/UserPage";
-
 import Container from "react-bootstrap/Container";
 import { Nav, Navbar } from "react-bootstrap";
-
 import "bootstrap/dist/css/bootstrap.min.css";
 import SearchPage from "./pages/SearchPage";
 import SearchComponent from "./components/SearchComponent";
