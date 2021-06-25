@@ -44,7 +44,6 @@ const SearchPage: FC = () => {
     const {query } = useParams<{query: string}>();
     const searchParams = new URLSearchParams(useLocation().search);
 
-
     const strOffset = searchParams.get("offset");
     const offset = strOffset ? parseInt(strOffset) : 0;
 
