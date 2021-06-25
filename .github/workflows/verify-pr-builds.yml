@@ -39,4 +39,4 @@ jobs:
           name: Verify PR
           conclusion: ${{ job.status }}
           output: |
-            {"summary":"install: ${{ install.summary }}\nlint: ${{ lint.summary }}\nbuild:${{ build.summary }}"}
+            {"summary":"job summary not yet supported"}
