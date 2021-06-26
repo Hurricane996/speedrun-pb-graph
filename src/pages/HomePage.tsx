@@ -6,7 +6,7 @@ const HomePage: FC = () => {
     return (
         <>
             <h1> Welcome to the Speedrun PB Grapher</h1>
-            <h3> Enter your username to get started!</h3>
+            <p> Enter your username to get started!</p>
             <SearchComponent />
         </>
     );
