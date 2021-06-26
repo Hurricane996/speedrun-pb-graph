@@ -22,7 +22,7 @@ const App : FC = ()  => {
                 </Nav>
                 <Nav className="float-right">
                     <SearchComponent/>
-                    <Nav.Link href="https://github.com/Hurricane996/speedrun-pb-graph"><Github style={{color: "white"}} className="ml-auto"/></Nav.Link>
+                    <Nav.Link aria-label="Project Github" href="https://github.com/Hurricane996/speedrun-pb-graph"><Github style={{color: "white"}} className="ml-auto"/></Nav.Link>
                 </Nav>
             </Navbar>
             <Container>

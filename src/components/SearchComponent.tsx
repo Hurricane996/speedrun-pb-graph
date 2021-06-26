@@ -1,3 +1,4 @@
+import { uniqueId } from "lodash";
 import React, { useState, ChangeEvent, FormEvent, FC } from "react";
 import { Search } from "react-bootstrap-icons";
 import Button from "react-bootstrap/Button";
@@ -21,8 +22,8 @@ const SearchComponent: FC = () => {
     return (    
         <Form inline onSubmit={submit}>
             <InputGroup>
-                <Form.Control type="search"  name="username" id="searchInput" placeholder="speedrun.com username" value={search} onChange={handleChange}/>
-                <Button type="submit"><Search/></Button>
+                <Form.Control type="search"  name="username" id={uniqueId("search-field-")} placeholder="speedrun.com username" value={search} onChange={handleChange}/>
+                <Button type="submit" aria-label="search"><Search/></Button>
             </InputGroup>
         </Form>
     );
