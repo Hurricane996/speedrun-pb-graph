@@ -6,7 +6,6 @@ import {SPEEDRUN_COM_URL} from "../App";
 import { SRCPaginatedResult, SRCResult, SRCUser } from "../types/SRCQueryResults";
 
 import useFetcher, {Fetcher} from "../utils/useFetcher";
-import fetchWrapper from "../utils/fetchWrapper";
 
 interface Result {
     id: string;
@@ -19,10 +18,10 @@ interface Results {
     hasNext: boolean;
 }
 
-const fetcher: Fetcher <{query: string; offset: number}, Results> = async ({query, offset}) => {
+const fetcher: Fetcher <{query: string; offset: number}, Results> = async ({query, offset}, fetchWrapper) => {
     const [lookupData, searchData] = await Promise.all([
-        fetchWrapper<SRCResult<SRCUser[]>>(`${SPEEDRUN_COM_URL}/users?lookup=${query}`, {timeout: 30000}),
-        fetchWrapper<SRCPaginatedResult<SRCUser[]>>(`${SPEEDRUN_COM_URL}/users?name=${query}&offset=${offset}`, {timeout: 30000})
+        fetchWrapper<SRCResult<SRCUser[]>>(`${SPEEDRUN_COM_URL}/users?lookup=${query}`),
+        fetchWrapper<SRCPaginatedResult<SRCUser[]>>(`${SPEEDRUN_COM_URL}/users?name=${query}&offset=${offset}`)
     ]);
 
     return {
@@ -34,7 +33,6 @@ const fetcher: Fetcher <{query: string; offset: number}, Results> = async ({quer
         hasNext: searchData.pagination.links.find(link => link.rel == "next") !== undefined
     };
 };
-
 
 const SearchPage: FC = () => {
     const {query } = useParams<{query: string}>();
