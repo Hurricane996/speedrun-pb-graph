@@ -12,7 +12,6 @@ import Chart from "chart.js";
 import makeTimeHumanReadable from "../utils/makeTimeHumanReadable";
 import useFetcher, { Fetcher } from "../utils/useFetcher";
 import insertIfExists from "../utils/insertIfExists";
-import fetchWrapper from "../utils/fetchWrapper";
 
 interface FetchedData {
     gameName: string;
@@ -34,19 +33,19 @@ interface FetcherInput {
     searchParams: URLSearchParams;
 }
 
-const fetcher: Fetcher<FetcherInput,FetchedData> = async ({userId, categoryId, levelId, searchParams}) => {
+const fetcher: Fetcher<FetcherInput,FetchedData> = async ({userId, categoryId, levelId, searchParams}, fetchWrapper) => {
     if(!userId) throw new Error("No user id provided!");
     if(!categoryId) throw new Error("No user id provided!");
 
     const [categoryData, userData, runsData, levelData, subcategoryArr] = await Promise.all([
-        fetchWrapper<SRCResult<SRCCategory_g>>(`${SPEEDRUN_COM_URL}/categories/${categoryId}?embed=game`,{timeout: 30000}),
-        fetchWrapper<SRCResult<SRCUser>>(`${SPEEDRUN_COM_URL}/users/${userId}`,{timeout: 30000}),
-        fetchWrapper<SRCResult<SRCRun[]>>(`${SPEEDRUN_COM_URL}/runs?user=${userId}${insertIfExists(levelId, "&level=", true)}&category=${categoryId}&max=200`,{timeout: 30000}),
-        levelId ? fetchWrapper<SRCResult<SRCLevel>>(`${SPEEDRUN_COM_URL}/levels/${levelId}`, {timeout: 30000}) : Promise.resolve<null>(null),
+        fetchWrapper<SRCResult<SRCCategory_g>>(`${SPEEDRUN_COM_URL}/categories/${categoryId}?embed=game`),
+        fetchWrapper<SRCResult<SRCUser>>(`${SPEEDRUN_COM_URL}/users/${userId}`),
+        fetchWrapper<SRCResult<SRCRun[]>>(`${SPEEDRUN_COM_URL}/runs?user=${userId}${insertIfExists(levelId, "&level=", true)}&category=${categoryId}&max=200`),
+        levelId ? fetchWrapper<SRCResult<SRCLevel>>(`${SPEEDRUN_COM_URL}/levels/${levelId}`) : Promise.resolve<null>(null),
 
         // load all of the subcategories
         Promise.all([...searchParams.entries()].map(async ([key,value]: [string,string]) : Promise<string> => {
-            const data = await fetchWrapper<SRCResult<SRCVariable>>(`${SPEEDRUN_COM_URL}/variables/${key}`, {timeout: 30000});
+            const data = await fetchWrapper<SRCResult<SRCVariable>>(`${SPEEDRUN_COM_URL}/variables/${key}`);
     
             return data.data.values.values[value as string].label;
         }))

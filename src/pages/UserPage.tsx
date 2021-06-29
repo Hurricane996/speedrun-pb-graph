@@ -3,9 +3,9 @@ import {Link, useParams} from "react-router-dom";
 import { ErrorAlert, LoadingAlert } from "../components/Alerts";
 import { SPEEDRUN_COM_URL } from "../App";
 import { groupBy } from "lodash";
-import { SRCResult, SRCUser, SRCVariableSet, SRCPB_gcl, SRCVariable } from "../types/SRCQueryResults";
+import { SRCResult, SRCUser, SRCPB_gcl } from "../types/SRCQueryResults";
 import useFetcher, { Fetcher } from "../utils/useFetcher";
-import fetchWrapper from "../utils/fetchWrapper";
+import loadVariables from "../utils/loadVariables";
 
 interface Game {
     name: string;
@@ -27,7 +27,7 @@ interface LevelCategory extends Category {
     levelName: string;
 }
 
-interface Subcategory {
+export interface Subcategory {
     subcategoryKeyId: string;
     subcategoryValueId: string;
     subcategoryValueName: string;
@@ -39,22 +39,10 @@ interface UserData {
     games: Game[];
 }
 
-const fetcher: Fetcher<{id: string},UserData> = async ({id}) => {
-    const loadVariables = async (variables: SRCVariableSet): Promise<Subcategory[]> => {
-        return await Promise.all(Object.entries(variables).map(async ([key, value]: [string, unknown]) => {
-            const variableData = await fetchWrapper<SRCResult<SRCVariable>>(`${SPEEDRUN_COM_URL}/variables/${key}`,{timeout:3000});
-            
-            return {
-                subcategoryKeyId: key,
-                subcategoryValueId: value as string,
-                subcategoryValueName: variableData.data.values.values[value as string].label
-            };
-        }));
-    };
-
+const fetcher: Fetcher<{id: string},UserData> = async ({id}, fetchWrapper) => {
     const [userApiData, pbData] = await Promise.all([
-        fetchWrapper<SRCResult<SRCUser>>(`${SPEEDRUN_COM_URL}/users/${id}`,{timeout: 30000}),
-        fetchWrapper<SRCResult<SRCPB_gcl[]>>(`${SPEEDRUN_COM_URL}/users/${id}/personal-bests?embed=game,category,level`,{timeout: 30000})
+        fetchWrapper<SRCResult<SRCUser>>(`${SPEEDRUN_COM_URL}/users/${id}`),
+        fetchWrapper<SRCResult<SRCPB_gcl[]>>(`${SPEEDRUN_COM_URL}/users/${id}/personal-bests?embed=game,category,level`)
     ]);
 
     const pbDataGrouped  = groupBy(pbData.data, pb => pb.category.data.type);
@@ -68,7 +56,7 @@ const fetcher: Fetcher<{id: string},UserData> = async ({id}) => {
         categoryName: pb.category.data.name,
         categoryId: pb.category.data.id,
 
-        subcategories: await loadVariables(pb.run.values)
+        subcategories: await loadVariables(pb.run.values, fetchWrapper)
     }))));
 
     const categoryDataILs: LevelCategory[] = (await Promise.all((pbDataIL.map(async pb => ({
@@ -79,7 +67,7 @@ const fetcher: Fetcher<{id: string},UserData> = async ({id}) => {
         levelId: pb.level.data.id,
         levelName: pb.level.data.name,
 
-        subcategories: await loadVariables(pb.run.values)        
+        subcategories: await loadVariables(pb.run.values, fetchWrapper)        
     })))));
 
     const gameIds: string[] = [...new Set<string>(pbData.data.map(pb => pb.game.data.id))];
@@ -145,7 +133,7 @@ const UserPage: FC =  () => {
     return (
         <>
             <h1>Categories for {data?.name}</h1>
-            {data && data?.games?.length > 0 ? data?.games.map((game: Game) => (
+            {data && data.games.length > 0 ? data.games.map((game: Game) => (
                 <React.Fragment key={game.id}>
                     <h2> {game.name} </h2>
                     {game.fullGameCategories.length > 0 ? <h3>Full game runs:</h3> : <></>}
