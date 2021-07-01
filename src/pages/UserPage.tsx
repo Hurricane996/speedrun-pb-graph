@@ -2,8 +2,7 @@ import React, {  FC } from "react";
 import {Link, useParams} from "react-router-dom";
 import { ErrorAlert, LoadingAlert } from "../components/Alerts";
 import { SPEEDRUN_COM_URL } from "../App";
-import { groupBy } from "lodash";
-import { SRCResult, SRCUser, SRCPB_gcl } from "../types/SRCQueryResults";
+import { SRCResult, SRCUser, EmbedGame, EmbedCategory, EmbedLevel, SRCPB } from "../types/SRCQueryResults";
 import useFetcher, { Fetcher } from "../utils/useFetcher";
 import loadVariables from "../utils/loadVariables";
 
@@ -42,13 +41,11 @@ interface UserData {
 const fetcher: Fetcher<{id: string},UserData> = async ({id}, fetchWrapper) => {
     const [userApiData, pbData] = await Promise.all([
         fetchWrapper<SRCResult<SRCUser>>(`${SPEEDRUN_COM_URL}/users/${id}`),
-        fetchWrapper<SRCResult<SRCPB_gcl[]>>(`${SPEEDRUN_COM_URL}/users/${id}/personal-bests?embed=game,category,level`)
+        fetchWrapper<SRCResult<(SRCPB & EmbedGame & EmbedCategory & EmbedLevel)[]>>(`${SPEEDRUN_COM_URL}/users/${id}/personal-bests?embed=game,category,level`)
     ]);
 
-    const pbDataGrouped  = groupBy(pbData.data, pb => pb.category.data.type);
-
-    const pbDataFullGame = pbDataGrouped["per-game"] ?? [];
-    const pbDataIL = pbDataGrouped["per-level"] ?? [];
+    const pbDataFullGame = pbData.data.filter(pb => pb.category.data.type === "per-game")
+    const pbDataIL =  pbData.data.filter(pb => pb.category.data.type === "per-level")
 
     const categoryDataFullGame: Category[] = (await Promise.all(pbDataFullGame.map(async pb => ({
         gameName: pb.game.data.names.international,
@@ -119,7 +116,7 @@ const subcategoryLinkString = (subcategories: Subcategory[]): string => subcateg
     : "";
 
 const subcategoryTextString = (subcategories: Subcategory[]): string => subcategories.length
-    ? " - "+subcategories.map((subcategory) => subcategory.subcategoryValueName).join(", ")
+    ? " - " + subcategories.map((subcategory) => subcategory.subcategoryValueName).join(", ")
     : "";
 
 const UserPage: FC =  () => {
@@ -136,26 +133,34 @@ const UserPage: FC =  () => {
             {data && data.games.length > 0 ? data.games.map((game: Game) => (
                 <React.Fragment key={game.id}>
                     <h2> {game.name} </h2>
-                    {game.fullGameCategories.length > 0 ? <h3>Full game runs:</h3> : <></>}
-                    <ul>
-                        {game.fullGameCategories.map((category) => (
-                            <li key={JSON.stringify(category)}>
-                                <Link to={`/graph/${data.id}/${category.categoryId}${subcategoryLinkString(category.subcategories)}`}>
-                                    {category.categoryName}{subcategoryTextString(category.subcategories)}
-                                </Link>
-                            </li>                
-                        ))}         
-                    </ul>
-                    {game.levelCategories.length > 0 ? <h3>IL runs:</h3> : <></>}
-                    <ul>
-                        {game.levelCategories.map((category) => (
-                            <li key={JSON.stringify(category)}>
-                                <Link to={`/graph/il/${data.id}/${category.levelId}/${category.categoryId}?${subcategoryLinkString(category.subcategories)}`}>
-                                    {category.levelName} {category.categoryName}{subcategoryTextString(category.subcategories)}
-                                </Link>
-                            </li>     
-                        ))}
-                    </ul>
+                    {game.fullGameCategories.length > 0 && 
+                        <>
+                            <h3>Full game runs:</h3>
+                            <ul>
+                                {game.fullGameCategories.map((category) => (
+                                    <li key={JSON.stringify(category)}>
+                                        <Link to={`/graph/${data.id}/${category.categoryId}${subcategoryLinkString(category.subcategories)}`}>
+                                            {category.categoryName}{subcategoryTextString(category.subcategories)}
+                                        </Link>
+                                    </li>                
+                                ))}         
+                            </ul>
+                        </>
+                    }
+                    {game.levelCategories.length > 0 && 
+                        <>
+                            <h3>IL runs:</h3>
+                            <ul>
+                                {game.levelCategories.map((category) => (
+                                    <li key={JSON.stringify(category)}>
+                                        <Link to={`/graph/il/${data.id}/${category.levelId}/${category.categoryId}?${subcategoryLinkString(category.subcategories)}`}>
+                                            {category.levelName} {category.categoryName}{subcategoryTextString(category.subcategories)}
+                                        </Link>
+                                    </li>     
+                                ))}
+                            </ul>
+                        </>
+                    }
                 </React.Fragment>
             )) : (<p>This user hasn&apos;t submitted any runs</p>)}
         </>

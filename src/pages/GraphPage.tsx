@@ -7,8 +7,8 @@ import { DateTime } from "luxon";
 import { Link } from "react-router-dom";
 import { Jumbotron } from "react-bootstrap";
 import { ErrorAlert, LoadingAlert } from "../components/Alerts";
-import { SRCCategory_g, SRCLevel, SRCResult, SRCRun, SRCUser, SRCVariable } from "../types/SRCQueryResults";
-import Chart from "chart.js";
+import { EmbedGame, SRCCategory, SRCLevel, SRCResult, SRCRun, SRCUser, SRCVariable } from "../types/SRCQueryResults";
+import {Chart, ChartOptions, TooltipItem} from "chart.js";
 import makeTimeHumanReadable from "../utils/makeTimeHumanReadable";
 import useFetcher, { Fetcher } from "../utils/useFetcher";
 import insertIfExists from "../utils/insertIfExists";
@@ -38,10 +38,10 @@ const fetcher: Fetcher<FetcherInput,FetchedData> = async ({userId, categoryId, l
     if(!categoryId) throw new Error("No user id provided!");
 
     const [categoryData, userData, runsData, levelData, subcategoryArr] = await Promise.all([
-        fetchWrapper<SRCResult<SRCCategory_g>>(`${SPEEDRUN_COM_URL}/categories/${categoryId}?embed=game`),
+        fetchWrapper<SRCResult<SRCCategory & EmbedGame>>(`${SPEEDRUN_COM_URL}/categories/${categoryId}?embed=game`),
         fetchWrapper<SRCResult<SRCUser>>(`${SPEEDRUN_COM_URL}/users/${userId}`),
         fetchWrapper<SRCResult<SRCRun[]>>(`${SPEEDRUN_COM_URL}/runs?user=${userId}${insertIfExists(levelId, "&level=", true)}&category=${categoryId}&max=200`),
-        levelId ? fetchWrapper<SRCResult<SRCLevel>>(`${SPEEDRUN_COM_URL}/levels/${levelId}`) : Promise.resolve<null>(null),
+        levelId ? fetchWrapper<SRCResult<SRCLevel>>(`${SPEEDRUN_COM_URL}/levels/${levelId}`) : null,
 
         // load all of the subcategories
         Promise.all([...searchParams.entries()].map(async ([key,value]: [string,string]) : Promise<string> => {
@@ -80,7 +80,7 @@ const fetcher: Fetcher<FetcherInput,FetchedData> = async ({userId, categoryId, l
 const GraphPage: FC = () => {
     const {userId, categoryId, levelId} = useParams<{userId?: string; categoryId?: string; levelId?: string}>();
 
-    const theChart = useRef<Chart.Chart| null>(null);
+    const theChart = useRef<Chart| null>(null);
 
     const searchParams = new URLSearchParams(useLocation().search);
 
@@ -107,7 +107,7 @@ const GraphPage: FC = () => {
         }
     };
 
-    const chartOptions: Chart.ChartOptions = {
+    const chartOptions: ChartOptions = {
         onClick: onChartClick,
         responsive: true,
         scales: {
@@ -127,7 +127,7 @@ const GraphPage: FC = () => {
         plugins: {
             tooltip: {
                 callbacks: {
-                    label: (tooltipItem: Chart.TooltipItem<"line">) => makeTimeHumanReadable(tooltipItem.parsed.y)
+                    label: (tooltipItem: TooltipItem<"line">) => makeTimeHumanReadable(tooltipItem.parsed.y)
                 }
             }
         }
