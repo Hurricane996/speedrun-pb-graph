@@ -4,7 +4,6 @@
   "homepage": "http://hurricane996.github.io/speedrun-pb-graph",
   "private": true,
   "dependencies": {
-    "@types/lodash": "^4.14.170",
     "bootstrap": "^5.0.2",
     "chart.js": "^3.4.0",
     "chartjs-adapter-luxon": "^1.0.0",
@@ -22,10 +21,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "predeploy": "yarn build",
-    "deploy": "gh-pages -d build"
+    "test": "react-scripts test"
   },
   "eslintConfig": {
     "extends": [
@@ -50,6 +46,7 @@
     "@testing-library/react": "^12.0.0",
     "@testing-library/user-event": "^13.1.9",
     "@types/jest": "^26.0.15",
+    "@types/lodash": "^4.14.170",
     "@types/luxon": "^1.27.0",
     "@types/node": "^15.12.5",
     "@types/react": "^17.0.0",
@@ -60,7 +57,6 @@
     "@typescript-eslint/parser": "^4.28.1",
     "eslint": "^7.29.0",
     "eslint-plugin-react": "^7.24.0",
-    "gh-pages": "^3.2.0",
     "react-scripts": "4.0.3",
     "typescript": "^4.3.5",
     "web-vitals": "^2.0.1"
