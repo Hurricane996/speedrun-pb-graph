@@ -21,7 +21,7 @@ export default <InType,OutType>(fetcher: Fetcher<InType, OutType>, input: InType
     const fetchWrapper =  async <T>(url: string): Promise<T> => {
         const cacheKey = url.replace(SPEEDRUN_COM_URL,"");
         if(isInCache(cacheKey)) {
-            return Promise.resolve(getFromCache<T>(cacheKey));
+            return getFromCache<T>(cacheKey);
         }
 
         const dataRaw = await fetchJsonp(url, {timeout: 10000}); 
@@ -29,7 +29,7 @@ export default <InType,OutType>(fetcher: Fetcher<InType, OutType>, input: InType
 
         addOrUpdateCache(cacheKey, data);
 
-        return Promise.resolve(data);
+        return data;
     };
 
     useEffect(() => {(async () => {
