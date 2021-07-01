@@ -3,8 +3,8 @@ import React, { createContext, FC, ReactNode, useState } from "react";
 
 export interface Cache {
     isInCache: (url: string) => boolean;
-    getFromCache: <T,>(url: string) => T;
-    addOrUpdateCache: <T,>(url: string, data: T) => void;
+    getFromCache: <T>(url: string) => T;
+    addOrUpdateCache: <T>(url: string, data: T) => void;
 }
 
 export const CacheContext = createContext<Cache|null>(null);
