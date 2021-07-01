@@ -30,7 +30,7 @@ const fetcher: Fetcher <{query: string; offset: number}, Results> = async ({quer
             name: lookupData.data[0].names.international
         } : null,
         results: searchData.data.map(user => ({id: user.id, name: user.names.international})),
-        hasNext: searchData.pagination.links.find(link => link.rel == "next") !== undefined
+        hasNext: !!searchData.pagination.links.find(link => link.rel == "next")
     };
 };
 
@@ -49,12 +49,15 @@ const SearchPage: FC = () => {
     return (
         <>
             <h3>Results for {query}:</h3>
-            <ul>
-                {data?.exactMatch && <p><b>An exact match was found: <Link to={`/user/${data.exactMatch.id}`}>{data.exactMatch.name} </Link></b></p> }
-                {data?.results && data.results.length > 0 ? data.results.map(({id, name}) => (
-                    <li key={id}><Link to={`/user/${id}`}>{name} </Link></li>
-                )) : (<p>No users found. <Link to="/">Search again?</Link></p>)}
-            </ul>
+            {data?.exactMatch && <p><b>An exact match was found: <Link to={`/user/${data.exactMatch.id}`}>{data.exactMatch.name} </Link></b></p> }
+            {data?.results && data.results.length > 0 
+            ?
+                <ul>
+                    {data.results.map(({id, name}) => (
+                        <li key={id}><Link to={`/user/${id}`}>{name} </Link></li>
+                    ))}
+                </ul> 
+            : <p>No users found. <Link to="/">Search again?</Link></p>}
 
             {offset > 0 && (<Link to={`/search/${query}?offset=${Math.max(0, offset - 20)}`}>&lt;Prev</Link>)}
             {offset > 0 && data?.hasNext && " - "}
