@@ -48,7 +48,7 @@
     "@types/jest": "^26.0.24",
     "@types/lodash": "^4.14.171",
     "@types/luxon": "^1.27.1",
-    "@types/node": "^15.12.5",
+    "@types/node": "^16.3.2",
     "@types/react": "^17.0.14",
     "@types/react-chartjs-2": "^2.5.7",
     "@types/react-dom": "^17.0.9",
