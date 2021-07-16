@@ -53,7 +53,7 @@ export default <InType,OutType>(
         }
     };
 
-    useEffect(() => {fetchData();}, forceReload);
+    useEffect(() => {fetchData();}, forceReload ?? []);
 
     return [data, loading, error];
 };
