@@ -27,16 +27,13 @@ interface FetchedData {
 }
 
 interface FetcherInput {
-    userId: string|undefined;
-    categoryId: string|undefined;
-    levelId: string|undefined;
+    userId: string;
+    categoryId: string;
+    levelId?: string;
     searchParams: URLSearchParams;
 }
 
 const fetcher: Fetcher<FetcherInput,FetchedData> = async ({userId, categoryId, levelId, searchParams}, fetchWrapper) => {
-    if(!userId) throw new Error("No user id provided!");
-    if(!categoryId) throw new Error("No user id provided!");
-
     const [categoryData, userData, runsData, levelData, subcategoryArr] = await Promise.all([
         fetchWrapper<SRCResult<SRCCategory & EmbedGame>>(`${SPEEDRUN_COM_URL}/categories/${categoryId}?embed=game`),
         fetchWrapper<SRCResult<SRCUser>>(`${SPEEDRUN_COM_URL}/users/${userId}`),
@@ -84,6 +81,11 @@ const GraphPage: FC = () => {
 
     const searchParams = new URLSearchParams(useLocation().search);
 
+    if(!userId)
+        return <ErrorAlert error="No user id provided!"/>;
+    if(!categoryId)
+        return <ErrorAlert error="No category id provided!"/>;
+        
     const [data, loading, error] = useFetcher(fetcher, {userId, categoryId, levelId, searchParams});
     if(error) return <ErrorAlert error={error} />;
     if(loading) return <LoadingAlert/>;

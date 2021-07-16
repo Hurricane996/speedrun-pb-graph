@@ -51,13 +51,13 @@ const SearchPage: FC = () => {
             <h3>Results for {query}:</h3>
             {data?.exactMatch && <p><b>An exact match was found: <Link to={`/user/${data.exactMatch.id}`}>{data.exactMatch.name} </Link></b></p> }
             {data?.results && data.results.length > 0 
-            ?
+                ?
                 <ul>
                     {data.results.map(({id, name}) => (
                         <li key={id}><Link to={`/user/${id}`}>{name} </Link></li>
                     ))}
                 </ul> 
-            : <p>No users found. <Link to="/">Search again?</Link></p>}
+                : <p>No users found. <Link to="/">Search again?</Link></p>}
 
             {offset > 0 && (<Link to={`/search/${query}?offset=${Math.max(0, offset - 20)}`}>&lt;Prev</Link>)}
             {offset > 0 && data?.hasNext && " - "}

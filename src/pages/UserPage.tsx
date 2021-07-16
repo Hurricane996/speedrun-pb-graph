@@ -44,8 +44,8 @@ const fetcher: Fetcher<{id: string},UserData> = async ({id}, fetchWrapper) => {
         fetchWrapper<SRCResult<(SRCPB & EmbedGame & EmbedCategory & EmbedLevel)[]>>(`${SPEEDRUN_COM_URL}/users/${id}/personal-bests?embed=game,category,level`)
     ]);
 
-    const pbDataFullGame = pbData.data.filter(pb => pb.category.data.type === "per-game")
-    const pbDataIL =  pbData.data.filter(pb => pb.category.data.type === "per-level")
+    const pbDataFullGame = pbData.data.filter(pb => pb.category.data.type === "per-game");
+    const pbDataIL =  pbData.data.filter(pb => pb.category.data.type === "per-level");
 
     const categoryDataFullGame: Category[] = (await Promise.all(pbDataFullGame.map(async pb => ({
         gameName: pb.game.data.names.international,
