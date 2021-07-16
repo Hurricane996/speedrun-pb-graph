@@ -1,0 +1,34 @@
+.form {
+    display: inline;
+    display: flex;
+}
+
+.form > * {
+    border-radius: 0.25em;
+    border-width: 1px;
+    padding: 0.5em;
+    border-color:#444;
+    border-width: 1px;
+    border-style: solid;
+}
+
+.searchInput {
+    width: 20em;
+    outline: none;
+
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-right-width: 0px;
+}
+
+.searchButton {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border-left-width: 0;
+    background-color: #1b94da;
+    color:white;
+}
+
+.searchIcon {
+    padding: 0 0.5em;
+}
