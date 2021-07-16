@@ -4,7 +4,8 @@ export default (input: number): string => {
     const m = Math.floor(input / 60) % 60;
     const h = Math.floor(input / 3600);
 
-    const msString = ms === 0 ? "" : ms.toFixed(3).slice(1);
+    // the else of the ternary produces 0.xxx, so the slice(1) call produces .xxx
+    const msString = ms < .001 ? "" : ms.toFixed(3).slice(1);
 
     const sString = s < 10 ? `0${s}` : `${s}`;
 

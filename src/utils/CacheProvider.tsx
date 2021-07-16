@@ -1,22 +1,19 @@
 import React, { createContext, FC, ReactNode, useState } from "react";
 
-
 export interface Cache {
     isInCache: (url: string) => boolean;
-    getFromCache: <T,>(url: string) => T;
-    addOrUpdateCache: <T,>(url: string, data: T) => void;
-    cache:  {[key: string]: unknown};
+    getFromCache: <T>(url: string) => T;
+    addOrUpdateCache: <T>(url: string, data: T) => void;
 }
 
 export const CacheContext = createContext<Cache|null>(null);
 
-
-type CacheProviderProps = {
-    children: ReactNode;
+interface CacheProviderProps {
+    children?: ReactNode;
 }
-const CacheProvider: FC<CacheProviderProps> = ({children}: CacheProviderProps) => {
-    const [cache, setCache] = useState< {[key: string]: unknown}>({});
 
+const CacheProvider: FC<CacheProviderProps> = ({children} : CacheProviderProps) => {
+    const [cache, setCache] = useState< {[key: string]: unknown}>({});
 
     const isInCache = (url: string): boolean => {
         return Object.keys(cache).includes(url);
@@ -32,7 +29,7 @@ const CacheProvider: FC<CacheProviderProps> = ({children}: CacheProviderProps) =
         setCache(newState);
     };
 
-    return (<CacheContext.Provider value={{isInCache, getFromCache, addOrUpdateCache, cache}}>
+    return (<CacheContext.Provider value={{isInCache, getFromCache, addOrUpdateCache}}>
         {children}
     </CacheContext.Provider>);
 };

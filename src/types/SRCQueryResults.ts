@@ -13,17 +13,15 @@ export interface SRCNameSet {
     international: string;
 }
 
-export interface SRCPB_gcl extends SRCPB, EmbedGame, EmbedLevel, EmbedCategory {}
-export interface SRCCategory_g extends SRCCategory, EmbedGame {}
-
 export interface SRCUser {
     id: string;
     names: SRCNameSet;
 }
+
 export interface SRCCategory {
     id: string;
     name: string;
-    type: string;
+    type: "per-game" | "per-level";
 }
 
 export interface EmbedGame {
@@ -50,7 +48,7 @@ export interface SRCVariableSet {
     [key: string]: string;
 }
 
-export interface SRCVariable{
+export interface SRCVariable {
     values : {
         values: {
             [key: string] : {
