@@ -1,15 +1,14 @@
 import React, { FC } from "react";
-import { HashRouter as Router, Route, Switch } from "react-router-dom";
+import { HashRouter as Router, NavLink, Route, Switch } from "react-router-dom";
 import GraphPage from "./pages/GraphPage";
 import HomePage from "./pages/HomePage";
 import UserPage from "./pages/UserPage";
-import Container from "react-bootstrap/Container";
-import { Nav, Navbar } from "react-bootstrap";
-import "bootstrap/dist/css/bootstrap.min.css";
 import SearchPage from "./pages/SearchPage";
 import SearchComponent from "./components/SearchComponent";
-import { Github } from "react-bootstrap-icons";
 import CacheProvider from "./utils/CacheProvider";
+import styles from "./App.module.css";
+
+import githubLogo from "./githubLogo.svg";
 
 export const SPEEDRUN_COM_URL = "https://speedrun.com/api/v1";
 
@@ -17,17 +16,16 @@ const App : FC = ()  => {
     return (
         <Router>
             <CacheProvider>
-                <Navbar bg="dark" expand="lg" className="mb-4" style={{justifyContent:"space-between", paddingLeft: "1em", paddingRight: "1em"}}>
-                    <Nav>
-                        <Navbar.Brand href="#/" style={{color: "white"}}>Speedrun PB Grapher</Navbar.Brand>
-                        <Nav.Link href="#/" style={{color: "white"}}>Home</Nav.Link>
-                    </Nav>
-                    <Nav className="float-right">
+                <div className={styles.navbar}>
+                    <div>
+                        <NavLink to="/" className={styles.navHeader}>Speedrun PB Grapher</NavLink>
+                    </div>
+                    <span className={styles.rightAligner}>
                         <SearchComponent/>
-                        <Nav.Link aria-label="Project Github" href="https://github.com/Hurricane996/speedrun-pb-graph"><Github style={{color: "white"}} className="ml-auto"/></Nav.Link>
-                    </Nav>
-                </Navbar>
-                <Container>
+                    </span>
+                    <a aria-label="Project Github" href="https://github.com/Hurricane996/speedrun-pb-graph"><img src={githubLogo} className={styles.githubLogo}/></a>
+                </div>
+                <div className={styles.container}>
                     <Switch>
                         <Route path="/user/:id" exact>
                             <UserPage />
@@ -46,7 +44,7 @@ const App : FC = ()  => {
                         </Route>
                         <Route>404</Route>
                     </Switch>
-                </Container>
+                </div>
             </CacheProvider>
         </Router>
     );

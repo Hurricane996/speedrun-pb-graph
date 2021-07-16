@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 import { ErrorAlert, LoadingAlert } from "../components/Alerts";
 import {SPEEDRUN_COM_URL} from "../App";
 import { SRCPaginatedResult, SRCResult, SRCUser } from "../types/SRCQueryResults";
-
 import useFetcher, {Fetcher} from "../utils/useFetcher";
 
 interface Result {
@@ -48,7 +47,7 @@ const SearchPage: FC = () => {
 
     return (
         <>
-            <h3>Results for {query}:</h3>
+            <h2>Results for {query}:</h2>
             {data?.exactMatch && <p><b>An exact match was found: <Link to={`/user/${data.exactMatch.id}`}>{data.exactMatch.name} </Link></b></p> }
             {data?.results && data.results.length > 0 
                 ?
