@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.js": "/speedrun-pb-graph/static/js/main.edfbb636.chunk.js",
-    "main.js.map": "/speedrun-pb-graph/static/js/main.edfbb636.chunk.js.map",
+    "main.js": "/speedrun-pb-graph/static/js/main.bc3306ce.chunk.js",
+    "main.js.map": "/speedrun-pb-graph/static/js/main.bc3306ce.chunk.js.map",
     "runtime-main.js": "/speedrun-pb-graph/static/js/runtime-main.9d04cbb8.js",
     "runtime-main.js.map": "/speedrun-pb-graph/static/js/runtime-main.9d04cbb8.js.map",
     "static/css/2.fb17aa6d.chunk.css": "/speedrun-pb-graph/static/css/2.fb17aa6d.chunk.css",
@@ -15,6 +15,6 @@
     "static/js/runtime-main.9d04cbb8.js",
     "static/css/2.fb17aa6d.chunk.css",
     "static/js/2.e9818e8d.chunk.js",
-    "static/js/main.edfbb636.chunk.js"
+    "static/js/main.bc3306ce.chunk.js"
   ]
 }
