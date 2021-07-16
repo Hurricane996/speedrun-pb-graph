@@ -1,14 +1,14 @@
 import React, {FC} from "react";
-import Alert from "react-bootstrap/esm/Alert";
+import styles from "./Alerts.module.css";
 
 interface ErrorProps {
     error: string;
 }
 
 export const ErrorAlert : FC<ErrorProps> = ({error} : ErrorProps) => (
-    <Alert variant="danger">An error occured: {error}</Alert>
+    <div className={`${styles.alert} ${styles.error}`}>An error occured: {error}</div>
 );
 
 export const LoadingAlert: FC = () => (
-    <Alert variant="info">Loading...</Alert>
+    <div className={`${styles.alert} ${styles.loading}`}>Loading...</div>
 );

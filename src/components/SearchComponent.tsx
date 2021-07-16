@@ -1,10 +1,9 @@
 import { uniqueId } from "lodash";
 import React, { useState, ChangeEvent, FormEvent, FC } from "react";
-import { Search } from "react-bootstrap-icons";
-import Button from "react-bootstrap/Button";
-import Form from "react-bootstrap/Form";
-import InputGroup from "react-bootstrap/InputGroup";
 import { useHistory } from "react-router";
+import styles from "./SearchComponent.module.css";
+
+import searchIcon from "./search.svg";
 
 const SearchComponent: FC = () => {
     const [search, setSearch] = useState<string>("");
@@ -20,12 +19,18 @@ const SearchComponent: FC = () => {
         history.push(`/search/${search}`);
     };
     return (    
-        <Form inline onSubmit={submit}>
-            <InputGroup>
-                <Form.Control type="search"  name="username" id={uniqueId("search-field-")} placeholder="speedrun.com username" value={search} onChange={handleChange}/>
-                <Button type="submit" aria-label="search"><Search/></Button>
-            </InputGroup>
-        </Form>
+        <form onSubmit={submit} className={styles.form}>
+            <input 
+                type="search"
+                name="username"
+                id={uniqueId("search-field-")}
+                placeholder="speedrun.com username"
+                value={search} 
+                onChange={handleChange}
+                className={styles.searchInput}
+            />
+            <button type="submit" aria-label="search" className={styles.searchButton}><img src={searchIcon} className={styles.searchIcon}/></button>
+        </form>
     );
 };
 

@@ -5,13 +5,13 @@ import { Line} from "react-chartjs-2";
 import "chartjs-adapter-luxon";
 import { DateTime } from "luxon";
 import { Link } from "react-router-dom";
-import { Jumbotron } from "react-bootstrap";
 import { ErrorAlert, LoadingAlert } from "../components/Alerts";
 import { EmbedGame, SRCCategory, SRCLevel, SRCResult, SRCRun, SRCUser, SRCVariable } from "../types/SRCQueryResults";
 import {Chart, ChartOptions, TooltipItem} from "chart.js";
 import makeTimeHumanReadable from "../utils/makeTimeHumanReadable";
 import useFetcher, { Fetcher } from "../utils/useFetcher";
 import insertIfExists from "../utils/insertIfExists";
+import styles from "./GraphPage.module.css";
 
 interface FetchedData {
     gameName: string;
@@ -140,9 +140,9 @@ const GraphPage: FC = () => {
             <h1>{data?.gameName}: {insertIfExists(data?.levelName," ")}{data?.categoryName} - {insertIfExists(data?.subcategoryString, " - ")}{data?.username}</h1>
             <Link to={`/user/${userId}`} >Back to user</Link>
             <p><b> Click a data-point to see the associated run&apos;s speedrun.com page!</b></p>
-            <Jumbotron>
+            <div className={styles.chartContainer}>
                 <Line ref={theChart} type='line' data={chartData} options={chartOptions} />
-            </Jumbotron>
+            </div>
         </>
     );
 };
