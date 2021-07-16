@@ -27,6 +27,6 @@ jobs:
       - name: install
         run: yarn 
       - name: lint
-        run: yarn eslint src/* \
+        run: yarn eslint src --ext ".tsx" --ext ".ts" --ext ".js"
       - name: build
         run: yarn build
