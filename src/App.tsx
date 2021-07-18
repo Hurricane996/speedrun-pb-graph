@@ -1,14 +1,15 @@
-import React, { FC } from "react";
+import React, { FC, Suspense } from "react";
 import { HashRouter as Router, NavLink, Route, Switch } from "react-router-dom";
-import GraphPage from "./pages/GraphPage";
-import HomePage from "./pages/HomePage";
-import UserPage from "./pages/UserPage";
-import SearchPage from "./pages/SearchPage";
 import SearchComponent from "./components/SearchComponent";
 import CacheProvider from "./utils/CacheProvider";
 import styles from "./App.module.css";
-
 import githubLogo from "./githubLogo.svg";
+import { LoadingAlert } from "./components/Alerts";
+
+const HomePage = React.lazy(() => import("./pages/HomePage"));
+const GraphPage = React.lazy(() => import("./pages/GraphPage"));
+const UserPage = React.lazy(() => import("./pages/UserPage"));
+const SearchResultsPage = React.lazy(() => import("./pages/SearchPage"));
 
 export const SPEEDRUN_COM_URL = "https://speedrun.com/api/v1";
 
@@ -26,24 +27,16 @@ const App : FC = ()  => {
                     <a aria-label="Project Github" href="https://github.com/Hurricane996/speedrun-pb-graph"><img src={githubLogo} className={styles.githubLogo}/></a>
                 </div>
                 <div className={styles.container}>
-                    <Switch>
-                        <Route path="/user/:id" exact>
-                            <UserPage />
-                        </Route>
-                        <Route path="/graph/il/:userId/:levelId/:categoryId" exact>
-                            <GraphPage/>
-                        </Route>
-                        <Route path="/graph/:userId/:categoryId" exact>
-                            <GraphPage/>
-                        </Route>
-                        <Route path="/search/:query" exact>
-                            <SearchPage />
-                        </Route>
-                        <Route path="/" exact>
-                            <HomePage/>
-                        </Route>
-                        <Route>404</Route>
-                    </Switch>
+                    <Suspense fallback={LoadingAlert}>
+                        <Switch>
+                            <Route path="/user/:id" exact component={UserPage}/>
+                            <Route path="/graph/il/:userId/:levelId/:categoryId" exact component={GraphPage} />
+                            <Route path="/graph/:userId/:categoryId" exact component={GraphPage}/>
+                            <Route path="/search/:query" exact component={SearchResultsPage}/>
+                            <Route path="/" exact component={HomePage}/>
+                            <Route>404</Route>
+                        </Switch>
+                    </Suspense>
                 </div>
             </CacheProvider>
         </Router>
