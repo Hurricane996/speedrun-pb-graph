@@ -1,6 +1,7 @@
 {
   "name": "speedrun-pb-graph",
   "version": "0.1.0",
+  "homepage": "http://hurricane996.github.io/speedrun-pb-graph",
   "private": true,
   "dependencies": {
     "chart.js": "^3.4.1",
