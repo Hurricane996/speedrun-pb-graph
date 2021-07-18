@@ -1,0 +1,1 @@
+{"version":3,"sources":["webpack://src/pages/GraphPage.module.css"],"names":[],"mappings":"AAAA,iCACI,WAAW,CACX,aAAc,CACd,cACJ","file":"6.a8ba97f9.chunk.css","sourcesContent":[".chartContainer {\n    margin:auto;\n    max-width: 80%;\n    max-height: 60%;\n}"]}

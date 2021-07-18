@@ -4,13 +4,6 @@ object-assign
 @license MIT
 */
 
-/*!
- * Chart.js v3.4.1
- * https://www.chartjs.org
- * (c) 2021 Chart.js Contributors
- * Released under the MIT License
- */
-
 /**
  * @license
  * Lodash <https://lodash.com/>
