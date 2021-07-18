@@ -1,4 +1,3 @@
-import { uniqueId } from "lodash";
 import React, { useState, ChangeEvent, FormEvent, FC } from "react";
 import { useHistory } from "react-router";
 import styles from "./SearchComponent.module.css";
@@ -23,7 +22,6 @@ const SearchComponent: FC = () => {
             <input 
                 type="search"
                 name="username"
-                id={uniqueId("search-field-")}
                 placeholder="speedrun.com username"
                 value={search} 
                 onChange={handleChange}
