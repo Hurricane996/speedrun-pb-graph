@@ -55,7 +55,7 @@ const fetcher: Fetcher<FetcherInput,FetchedData> = async ({userId, categoryId, l
             run=> 
                 Object.entries(run.values).every(
                     ([subcategoryKey, subcategoryValue] :[string, string]) => 
-                        subcategoryKey as string === searchParams.get(subcategoryValue)
+                        subcategoryValue as string === searchParams.get(subcategoryKey)
                 )
         )
         .map(run => ({
