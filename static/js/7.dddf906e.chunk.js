@@ -1,0 +1,2 @@
+(this["webpackJsonpspeedrun-pb-graph"]=this["webpackJsonpspeedrun-pb-graph"]||[]).push([[7],{210:function(e,r,t){"use strict";t.r(r);t(0);var n=t(26),s=t(1);r.default=function(){return Object(s.jsxs)(s.Fragment,{children:[Object(s.jsx)("h1",{children:" Welcome to the Speedrun PB Grapher"}),Object(s.jsx)("p",{children:" Enter your username to get started!"}),Object(s.jsx)(n.a,{})]})}}}]);
+//# sourceMappingURL=7.dddf906e.chunk.js.map
