@@ -1,7 +1,6 @@
 .container {
     margin: 0 1em;
 }
-
 @media screen and (min-width: 768px) {
     .container {
         margin: 0 50px
@@ -18,25 +17,6 @@
     flex-direction: column;
 
 }
-
-
-.githubLogo {
-    padding: 0;
-    margin-left: 0.5em;
-
-    width: 32px;
-    height: 32px;
-}
-.navHeader {
-    font-size: 1.5em;
-    font-weight: 700;
-    padding: 0;
-    padding: 0.5em;
-    color: white;
-    text-decoration: none;
-    line-height: 0;
-}
-
 @media screen and (min-width: 641px) {
     .navbar {
         flex-direction: row;
@@ -45,4 +25,20 @@
         margin-left: auto;
     }
 }
+
+.githubLogo {
+    margin-left: 0.5em;
+    width: 32px;
+    height: 32px;
+}
+.navHeader {
+    font-size: 1.5em;
+    font-weight: 700;
+    padding: 0.5em;
+    color: white;
+    text-decoration: none;
+    line-height: 0;
+}
+
+
 

@@ -24,7 +24,7 @@ const App : FC = ()  => {
                     <span className={styles.rightAligner}>
                         <SearchComponent/>
                     </span>
-                    <a aria-label="Project Github" href="https://github.com/Hurricane996/speedrun-pb-graph"><img src={githubLogo} className={styles.githubLogo}/></a>
+                    <a aria-label="Project Github" href="https://github.com/Hurricane996/speedrun-pb-graph"><img src={githubLogo} alt="Github Logo" className={styles.githubLogo}/></a>
                 </div>
                 <div className={styles.container}>
                     <Suspense fallback={LoadingAlert}>

@@ -31,7 +31,7 @@ interface UserData {
     games: Game[];
 }
 
-export interface Subcategory {
+interface Subcategory {
     subcategoryKeyId: string;
     subcategoryValueId: string;
     subcategoryValueName: string;

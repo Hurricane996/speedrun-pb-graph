@@ -5,7 +5,7 @@ export interface SRCResult<T> {
 export interface SRCPaginatedResult<T> extends SRCResult<T> {
     data: T;
     pagination: {
-        links: {rel: string; uri: string}[];
+        links: {rel: "prev" | "next"; uri: string}[];
     };
 }
 

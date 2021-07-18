@@ -1,16 +1,15 @@
 .alert {
     padding: 1em;
     margin: 0.5em;
-
     border-radius: 0.5em;
     font-size: 16px;
     border-style: solid;
     border-width: 2px;
 }
+
 .error {
     background-color: #ff6666;
     border-color: #ee5555;
-
 }
 
 .loading {
