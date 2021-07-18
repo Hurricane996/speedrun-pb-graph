@@ -1,20 +1,20 @@
 {
   "files": {
-    "main.css": "http://hurricane996.github.io/speedrun-pb-graph/static/css/main.b7f46a8a.chunk.css",
-    "main.js": "http://hurricane996.github.io/speedrun-pb-graph/static/js/main.18849f5b.chunk.js",
-    "main.js.map": "http://hurricane996.github.io/speedrun-pb-graph/static/js/main.18849f5b.chunk.js.map",
-    "runtime-main.js": "http://hurricane996.github.io/speedrun-pb-graph/static/js/runtime-main.b30968f7.js",
-    "runtime-main.js.map": "http://hurricane996.github.io/speedrun-pb-graph/static/js/runtime-main.b30968f7.js.map",
-    "static/js/2.8c177a3f.chunk.js": "http://hurricane996.github.io/speedrun-pb-graph/static/js/2.8c177a3f.chunk.js",
-    "static/js/2.8c177a3f.chunk.js.map": "http://hurricane996.github.io/speedrun-pb-graph/static/js/2.8c177a3f.chunk.js.map",
-    "index.html": "http://hurricane996.github.io/speedrun-pb-graph/index.html",
-    "static/css/main.b7f46a8a.chunk.css.map": "http://hurricane996.github.io/speedrun-pb-graph/static/css/main.b7f46a8a.chunk.css.map",
-    "static/js/2.8c177a3f.chunk.js.LICENSE.txt": "http://hurricane996.github.io/speedrun-pb-graph/static/js/2.8c177a3f.chunk.js.LICENSE.txt",
-    "static/media/githubLogo.3359e022.svg": "http://hurricane996.github.io/speedrun-pb-graph/static/media/githubLogo.3359e022.svg",
-    "static/media/search.43904a2f.svg": "http://hurricane996.github.io/speedrun-pb-graph/static/media/search.43904a2f.svg"
+    "main.css": "https://hurricane996.github.io/speedrun-pb-graph/static/css/main.b7f46a8a.chunk.css",
+    "main.js": "https://hurricane996.github.io/speedrun-pb-graph/static/js/main.18849f5b.chunk.js",
+    "main.js.map": "https://hurricane996.github.io/speedrun-pb-graph/static/js/main.18849f5b.chunk.js.map",
+    "runtime-main.js": "https://hurricane996.github.io/speedrun-pb-graph/static/js/runtime-main.0a556232.js",
+    "runtime-main.js.map": "https://hurricane996.github.io/speedrun-pb-graph/static/js/runtime-main.0a556232.js.map",
+    "static/js/2.8c177a3f.chunk.js": "https://hurricane996.github.io/speedrun-pb-graph/static/js/2.8c177a3f.chunk.js",
+    "static/js/2.8c177a3f.chunk.js.map": "https://hurricane996.github.io/speedrun-pb-graph/static/js/2.8c177a3f.chunk.js.map",
+    "index.html": "https://hurricane996.github.io/speedrun-pb-graph/index.html",
+    "static/css/main.b7f46a8a.chunk.css.map": "https://hurricane996.github.io/speedrun-pb-graph/static/css/main.b7f46a8a.chunk.css.map",
+    "static/js/2.8c177a3f.chunk.js.LICENSE.txt": "https://hurricane996.github.io/speedrun-pb-graph/static/js/2.8c177a3f.chunk.js.LICENSE.txt",
+    "static/media/githubLogo.3359e022.svg": "https://hurricane996.github.io/speedrun-pb-graph/static/media/githubLogo.3359e022.svg",
+    "static/media/search.43904a2f.svg": "https://hurricane996.github.io/speedrun-pb-graph/static/media/search.43904a2f.svg"
   },
   "entrypoints": [
-    "static/js/runtime-main.b30968f7.js",
+    "static/js/runtime-main.0a556232.js",
     "static/js/2.8c177a3f.chunk.js",
     "static/css/main.b7f46a8a.chunk.css",
     "static/js/main.18849f5b.chunk.js"
