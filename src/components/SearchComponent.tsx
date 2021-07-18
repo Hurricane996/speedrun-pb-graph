@@ -27,7 +27,7 @@ const SearchComponent: FC = () => {
                 onChange={handleChange}
                 className={styles.searchInput}
             />
-            <button type="submit" aria-label="search" className={styles.searchButton}><img src={searchIcon} className={styles.searchIcon}/></button>
+            <button type="submit" aria-label="search" className={styles.searchButton}><img src={searchIcon} alt="Search" className={styles.searchIcon}/></button>
         </form>
     );
 };

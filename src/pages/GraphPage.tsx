@@ -51,7 +51,13 @@ const fetcher: Fetcher<FetcherInput,FetchedData> = async ({userId, categoryId, l
     const runs = runsData.data
         .filter(run=> run.status.status !== "rejected")
         // only accept runs of the suggested subcategory
-        .filter(run=> Object.entries(run.values).every(([runKey, runValue] :[string, string]) => runValue as string === searchParams.get(runKey)))
+        .filter(
+            run=> 
+                Object.entries(run.values).every(
+                    ([subcategoryKey, subcategoryValue] :[string, string]) => 
+                        subcategoryValue as string === searchParams.get(subcategoryKey)
+                )
+        )
         .map(run => ({
             date: DateTime.fromFormat(run.date, "yyyy-MM-dd", {zone: "UTC"}), 
             time: run.times.primary_t,

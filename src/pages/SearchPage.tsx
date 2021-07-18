@@ -29,7 +29,7 @@ const fetcher: Fetcher <{query: string; offset: number}, Results> = async ({quer
             name: lookupData.data[0].names.international
         } : null,
         results: searchData.data.map(user => ({id: user.id, name: user.names.international})),
-        hasNext: !!searchData.pagination.links.find(link => link.rel == "next")
+        hasNext: searchData.pagination.links.find(link => link.rel == "next") !== undefined
     };
 };
 
